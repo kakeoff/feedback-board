@@ -1,19 +1,11 @@
-import { validationResult } from "express-validator";
 import UserModel from "../models/User";
 import jwt from "jsonwebtoken";
-import { Request, Response } from "express";
+import { Response } from "express";
 import bcrypt from "bcrypt";
-import { AuthDto, AuthRequest, RegisterDto } from "../types/authTypes";
+import { AuthRequest, LoginRequest, RegisterRequest } from "../types/authTypes";
 
-export const register = async (
-  req: Request<{}, {}, RegisterDto>,
-  res: Response
-) => {
+export const register = async (req: RegisterRequest, res: Response) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json(errors.array());
-    }
     const password = req.body.password;
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
@@ -51,7 +43,7 @@ export const register = async (
   }
 };
 
-export const login = async (req: Request<{}, {}, AuthDto>, res: Response) => {
+export const login = async (req: LoginRequest, res: Response) => {
   try {
     const user = await UserModel.findOne({ email: req.body.email });
     if (!user) {
