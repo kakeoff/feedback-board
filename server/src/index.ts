@@ -1,7 +1,8 @@
+import cors from "cors";
 import express from "express";
+import fs from "fs";
 import mongoose from "mongoose";
 import multer from "multer";
-import fs from "fs";
 
 import {
   loginValidation,
@@ -9,7 +10,7 @@ import {
   registerValidation,
 } from "./validation";
 
-import { UserController, PostController } from "./controllers/index";
+import { PostController, UserController } from "./controllers/index";
 
 import checkAuth from "./utils/checkAuth";
 import handleValidationErrors from "./utils/handleValidationErrors";
@@ -45,6 +46,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.use(express.json());
+app.use(cors());
 app.use("/uploads", express.static("uploads"));
 
 app.post(

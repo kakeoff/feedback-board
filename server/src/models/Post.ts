@@ -1,4 +1,5 @@
-import mongoose, { Mongoose } from "mongoose";
+import mongoose from "mongoose";
+import { PostType } from "../types/postTypes";
 
 const PostSchema = new mongoose.Schema(
   {
@@ -30,4 +31,4 @@ const PostSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Post", PostSchema);
+export default mongoose.model<PostType>("Post", PostSchema);

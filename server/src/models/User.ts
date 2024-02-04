@@ -1,22 +1,26 @@
-import mongoose, { Mongoose } from "mongoose";
+import mongoose from "mongoose";
+import { UserType } from "../types/userTypes";
 
-const UserSchema = new mongoose.Schema({
-  fullName: {
-    type: String,
-    required: true
+const UserSchema = new mongoose.Schema(
+  {
+    fullName: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    passwordHash: {
+      type: String,
+      required: true,
+    },
+    avatarUrl: String,
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  passwordHash: {
-    type: String,
-    required: true
-  },
-  avatarUrl: String
-}, {
-  timestamps: true
-})
+  {
+    timestamps: true,
+  }
+);
 
-export default mongoose.model('User', UserSchema)
+export default mongoose.model<UserType>("User", UserSchema);

@@ -1,7 +1,7 @@
-import UserModel from "../models/User";
-import jwt from "jsonwebtoken";
-import { Response } from "express";
 import bcrypt from "bcrypt";
+import { Response } from "express";
+import jwt from "jsonwebtoken";
+import UserModel from "../models/User";
 import { AuthRequest, LoginRequest, RegisterRequest } from "../types/authTypes";
 
 export const register = async (req: RegisterRequest, res: Response) => {
@@ -29,7 +29,7 @@ export const register = async (req: RegisterRequest, res: Response) => {
       }
     );
     const userData = {
-      _id: user._id,
+      id: user._id,
       email: user.email,
       fullName: user.fullName,
       avatarUrl: user.avatarUrl,
@@ -70,7 +70,7 @@ export const login = async (req: LoginRequest, res: Response) => {
     );
 
     const userData = {
-      _id: user._id,
+      id: user._id,
       email: user.email,
       fullName: user.fullName,
       avatarUrl: user.avatarUrl,
@@ -91,7 +91,7 @@ export const getMe = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ message: "User not found" });
     }
     const userData = {
-      _id: user._id,
+      id: user._id,
       email: user.email,
       fullName: user.fullName,
       avatarUrl: user.avatarUrl,
