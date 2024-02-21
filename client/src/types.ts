@@ -6,6 +6,7 @@ export type PostType = {
   createdAt: string;
   updatedAt: string;
   viewsCount: number;
+  imageUrl: string;
   user: UserType;
 };
 

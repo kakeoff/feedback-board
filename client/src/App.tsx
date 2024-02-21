@@ -4,9 +4,9 @@ import { Navbar } from "./components/Navbar";
 function App() {
   return (
     <>
-      <Navbar/>
+      <Navbar />
       <Routes>
-        <Route path="/" element={<HomeView/>}/>
+        <Route path="/" element={<HomeView />} />
       </Routes>
     </>
   );

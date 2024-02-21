@@ -22,4 +22,5 @@ export type PostType = {
   user: UserType;
   createdAt: string;
   updatedAt: string;
+  imageUrl: string;
 };

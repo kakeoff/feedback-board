@@ -27,6 +27,8 @@ export const getAll = async (req: Request, res: Response) => {
         createdAt: post.createdAt,
         updatedAt: post.updatedAt,
         viewsCount: post.viewsCount,
+        imageUrl: post.imageUrl,
+        tags: post.tags,
         user: {
           id: post.user._id,
           fullName: post.user.fullName,
@@ -64,6 +66,8 @@ export const getOne = async (req: Request, res: Response) => {
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
       viewsCount: post.viewsCount,
+      imageUrl: post.imageUrl,
+      tags: post.tags,
       user: {
         id: post.user._id,
         fullName: post.user.fullName,
@@ -96,6 +100,8 @@ export const create = async (req: CreateOrUpdatePostRequest, res: Response) => {
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
       viewsCount: post.viewsCount,
+      imageUrl: post.imageUrl,
+      tags: post.tags,
       user: {
         id: post.user._id,
         fullName: post.user.fullName,
