@@ -1,5 +1,6 @@
 import { mdiClose } from "@mdi/js";
 import Icon from "@mdi/react";
+import { useEffect } from "react";
 
 interface ModalType {
   onClose: () => void;
@@ -9,10 +10,17 @@ interface ModalType {
 }
 
 export function Modalbox(props: ModalType) {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
   return (
     <div
       onClick={() => props.onClose()}
-      className="absolute w-full h-full inset-0 z-[20] flex justify-center items-center backdrop-blur-sm bg-black/15"
+      className="fixed w-full h-full inset-0 z-[20] flex justify-center items-center backdrop-blur-sm bg-black/15"
     >
       <div
         onClick={(event) => event.stopPropagation()}
