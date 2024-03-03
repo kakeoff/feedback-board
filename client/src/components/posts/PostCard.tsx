@@ -13,15 +13,13 @@ export function PostCard(props: PostCardProps) {
   const updatedAt = new Date(props.post.updatedAt).toLocaleString();
 
   return (
-    <div className="w-[50%] min-w-[350px] flex flex-col rounded-[8px] shadow-lg border overflow-hidden">
-      {props.post.imageUrl ? (
+    <div className="w-full min-w-[350px] flex flex-col rounded-[8px] shadow-lg border overflow-hidden">
+      {props.post.imageUrl && (
         <img
           className="w-[100%] h-[300px] object-cover"
           src={`${url}/${props.post.imageUrl}`}
           alt="post img"
         />
-      ) : (
-        <div className="w-[100%] h-[300px] bg-gray-300 animate-pulse"></div>
       )}
 
       <div className="bg-gray-100 p-[10px] flex flex-col gap-[8px]">

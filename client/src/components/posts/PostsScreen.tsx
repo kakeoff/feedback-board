@@ -10,7 +10,7 @@ interface PostsScreenProps {
 
 export function PostsScreen(props: PostsScreenProps) {
   return (
-    <div className="flex flex-col items-center gap-[20px] h-full pt-[90px] pb-[30px]">
+    <div className="flex flex-col items-center gap-[20px] h-full">
       {props.posts.status === "loading" ? (
         <div>loading</div>
       ) : (
