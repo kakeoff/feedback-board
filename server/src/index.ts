@@ -17,7 +17,7 @@ import handleValidationErrors from "./utils/handleValidationErrors";
 
 mongoose
   .connect(
-    "mongodb+srv://admin:admin@mern-posts-db.rvisudm.mongodb.net/mern-posts?retryWrites=true&w=majority"
+    "mongodb+srv://admin:admin@mern-posts-db.rvisudm.mongodb.net/?retryWrites=true&w=majority&appName=mern-posts-db"
   )
   .then(() => {
     console.log("Database connected.");

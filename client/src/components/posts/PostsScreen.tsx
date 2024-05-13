@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { PostType } from "../../types";
 import { PostCard } from "./PostCard";
 
@@ -14,7 +15,11 @@ export function PostsScreen(props: PostsScreenProps) {
       {props.posts.status === "loading" ? (
         <div>loading</div>
       ) : (
-        props.posts.items.map((post) => <PostCard key={post.id} post={post} />)
+        props.posts.items.map((post) => (
+          <Link className="w-full" to={`/posts/${post.id}`}>
+            <PostCard key={post.id} post={post} />{" "}
+          </Link>
+        ))
       )}
     </div>
   );

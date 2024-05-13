@@ -13,7 +13,7 @@ export function PostCard(props: PostCardProps) {
   const updatedAt = new Date(props.post.updatedAt).toLocaleString();
 
   return (
-    <div className="w-full min-w-[350px] flex flex-col rounded-[8px] shadow-lg border overflow-hidden">
+    <div className="w-full min-w-[350px] group hover:translate-y-[-5px] transition duration-300 flex flex-col rounded-[8px] shadow-lg border overflow-hidden">
       {props.post.imageUrl && (
         <img
           className="w-[100%] h-[300px] object-cover"
@@ -22,7 +22,7 @@ export function PostCard(props: PostCardProps) {
         />
       )}
 
-      <div className="bg-gray-100 p-[10px] flex flex-col gap-[8px]">
+      <div className="bg-gray-100 group-hover:bg-gray-200 transition duration-200 p-[10px] flex flex-col gap-[8px]">
         <p className="font-[700] text-[21px]">{props.post.title}</p>
         <div className="flex gap-[5px] items-center">
           <Icon path={mdiCalendarCheckOutline} size={1} color="black" />
