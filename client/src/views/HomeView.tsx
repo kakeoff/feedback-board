@@ -5,11 +5,12 @@ import { AppDispatch, RootState } from "../redux/store";
 import { PostsScreen } from "../components/posts/PostsScreen";
 import { TagsList } from "../components/tags/TagsList";
 import { PostsScreenLoader } from "../components/posts/PostsScreenLoader";
+import { LoadingStatus } from "../types";
 
 export function HomeView() {
   const dispatch = useDispatch<AppDispatch>();
   const { posts, tags } = useSelector((state: RootState) => state.posts);
-  const isPostsLoading = posts.status === "loading";
+  const isPostsLoading = posts.status === LoadingStatus.LOADING;
   React.useEffect(() => {
     dispatch(fetchPosts());
     dispatch(fetchTags());

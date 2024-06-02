@@ -1,3 +1,5 @@
+import { LoadingStatus } from "../../types";
+
 type TagsListProps = {
   tags: {
     items: String[];
@@ -5,7 +7,7 @@ type TagsListProps = {
   };
 };
 export const TagsList = (props: TagsListProps) => {
-  const isLoading = props.tags.status === "loading";
+  const isLoading = props.tags.status === LoadingStatus.LOADING;
   return (
     <div className="w-full md:w-fit min-w-[250px] p-[20px] h-fit flex flex-col gap-[5px] rounded-[8px] shadow-lg border overflow-hidden">
       <p className="font-[700] text-[19px]">Tags</p>

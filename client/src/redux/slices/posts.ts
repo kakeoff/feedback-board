@@ -1,6 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "../../axios";
-import { PostType } from "../../types";
+import { LoadingStatus, PostType } from "../../types";
+
+interface PostsState {
+  posts: {
+    items: PostType[];
+    status: LoadingStatus;
+  };
+  tags: {
+    items: String[];
+    status: LoadingStatus;
+  };
+}
 
 export const fetchPosts = createAsyncThunk(
   "posts/fetchPosts",
@@ -18,14 +29,14 @@ export const fetchTags = createAsyncThunk(
   }
 );
 
-const initialState = {
+const initialState: PostsState = {
   posts: {
-    items: [] as PostType[],
-    status: "loading",
+    items: [],
+    status: LoadingStatus.LOADING,
   },
   tags: {
-    items: [] as String[],
-    status: "loading",
+    items: [],
+    status: LoadingStatus.LOADING,
   },
 };
 
@@ -37,30 +48,29 @@ const postsSlice = createSlice({
     builder
       .addCase(fetchPosts.pending, (state) => {
         state.posts.items = [];
-        state.posts.status = "loading";
+        state.posts.status = LoadingStatus.LOADING;
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.posts.items = action.payload;
-        state.posts.status = "loaded";
+        state.posts.status = LoadingStatus.LOADED;
       })
-
       .addCase(fetchPosts.rejected, (state) => {
         state.posts.items = [];
-        state.posts.status = "error";
+        state.posts.status = LoadingStatus.ERROR;
       })
 
       .addCase(fetchTags.pending, (state) => {
         state.tags.items = [];
-        state.tags.status = "loading";
+        state.tags.status = LoadingStatus.LOADING;
       })
       .addCase(fetchTags.fulfilled, (state, action) => {
         state.tags.items = action.payload;
-        state.tags.status = "loaded";
+        state.tags.status = LoadingStatus.LOADED;
       })
 
       .addCase(fetchTags.rejected, (state) => {
         state.tags.items = [];
-        state.tags.status = "error";
+        state.tags.status = LoadingStatus.ERROR;
       });
   },
 });

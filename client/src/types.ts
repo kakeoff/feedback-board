@@ -18,3 +18,16 @@ export type UserType = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type UserWithToken = UserType & { token: string };
+
+export enum LoadingStatus {
+  LOADING = "loading",
+  LOADED = "loaded",
+  ERROR = "error",
+}
+
+export type LoginParams = {
+  email: string;
+  password: string;
+};
