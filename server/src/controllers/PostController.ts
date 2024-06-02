@@ -55,7 +55,9 @@ export const getOne = async (req: Request, res: Response) => {
         $inc: { viewsCount: 1 },
       },
       { returnDocument: "after" }
-    );
+    )
+      .populate("user")
+      .exec();
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }

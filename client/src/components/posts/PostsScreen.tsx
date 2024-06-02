@@ -11,16 +11,12 @@ interface PostsScreenProps {
 
 export function PostsScreen(props: PostsScreenProps) {
   return (
-    <div className="flex flex-col items-center gap-[20px] h-full">
-      {props.posts.status === "loading" ? (
-        <div>loading</div>
-      ) : (
-        props.posts.items.map((post) => (
-          <Link className="w-full" to={`/posts/${post.id}`}>
-            <PostCard key={post.id} post={post} />{" "}
-          </Link>
-        ))
-      )}
+    <div className="flex flex-col items-center gap-[20px] h-full w-full">
+      {props.posts.items.map((post) => (
+        <Link key={post.id} className="w-full" to={`/posts/${post.id}`}>
+          <PostCard post={post} />{" "}
+        </Link>
+      ))}
     </div>
   );
 }
