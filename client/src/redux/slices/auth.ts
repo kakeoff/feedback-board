@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import { LoadingStatus, LoginParams, UserWithToken } from "../../types";
+import axios from "../../axios";
+import { AuthFormData, LoadingStatus, UserWithToken } from "../../types";
+import { RootState } from "../store";
 
 interface AuthState {
   data: UserWithToken | null;
@@ -12,9 +13,9 @@ const initialState: AuthState = {
   status: LoadingStatus.LOADING,
 };
 
-const fetchAuth = createAsyncThunk(
+export const fetchAuth = createAsyncThunk(
   "auth/fetchAuth",
-  async (params: LoginParams): Promise<UserWithToken> => {
+  async (params: AuthFormData): Promise<UserWithToken> => {
     const { data } = await axios.post<UserWithToken>("auth/login", params);
     return data;
   }
@@ -23,7 +24,11 @@ const fetchAuth = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      state.data = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchAuth.pending, (state) => {
@@ -41,4 +46,10 @@ const authSlice = createSlice({
   },
 });
 
+export const checkIsAuth = (state: RootState) => {
+  return !!state.auth.data;
+};
+
 export const authReducer = authSlice.reducer;
+
+export const { logout } = authSlice.actions;

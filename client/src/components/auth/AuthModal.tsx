@@ -1,10 +1,11 @@
-import { AuthFormData } from "../Navbar";
+import { AuthFormData } from "../../types";
 import { Modalbox } from "../common/Modalbox";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 interface AuthModalProps {
   onClose: () => void;
   onLogin: (data: AuthFormData) => void;
+  error: string | null;
 }
 
 export function AuthModal(props: AuthModalProps) {
@@ -49,6 +50,7 @@ export function AuthModal(props: AuthModalProps) {
             <span className="text-red-500">{errors.password.message}</span>
           )}
         </div>
+        {props.error && <span className="text-red-500">{props.error}</span>}
         <button
           type="submit"
           className="bg-green-100 px-[10px] py-[5px] w-[100px] rounded-[6px] hover:scale-[1.03] hover:bg-green-200 transition duration-200"

@@ -52,7 +52,7 @@ app.use("/uploads", express.static("uploads"));
 app.post(
   "/auth/login",
   loginValidation,
-  // handleValidationErrors,
+  handleValidationErrors,
   UserController.login
 );
 app.post(

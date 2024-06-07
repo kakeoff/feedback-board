@@ -56,7 +56,7 @@ export const login = async (req: LoginRequest, res: Response) => {
     );
 
     if (!isValidPass) {
-      return res.status(404).json({ message: "Invalid login or password" });
+      return res.status(403).json({ message: "Invalid login or password" });
     }
 
     const token = jwt.sign(

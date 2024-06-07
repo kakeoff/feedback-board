@@ -26,8 +26,7 @@ export enum LoadingStatus {
   LOADED = "loaded",
   ERROR = "error",
 }
-
-export type LoginParams = {
+export interface AuthFormData {
   email: string;
   password: string;
-};
+}
