@@ -3,7 +3,19 @@ import { HomeView } from "./views/HomeView";
 import { Navbar } from "./components/Navbar";
 import NotFound from "./components/NotFound";
 import { FullPost } from "./components/posts/FullPost";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "./redux/store";
+import { useEffect } from "react";
+import { fetchMe } from "./redux/slices/auth";
+import { isTokenExists } from "./helpers/checkToken";
 function App() {
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    if (isTokenExists()) {
+      dispatch(fetchMe());
+    }
+  }, []);
   return (
     <>
       <Navbar />

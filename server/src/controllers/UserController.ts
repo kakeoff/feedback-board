@@ -70,12 +70,14 @@ export const login = async (req: LoginRequest, res: Response) => {
     );
 
     const userData = {
-      id: user._id,
-      email: user.email,
-      fullName: user.fullName,
-      avatarUrl: user.avatarUrl,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      user: {
+        id: user._id,
+        email: user.email,
+        fullName: user.fullName,
+        avatarUrl: user.avatarUrl,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
       token: token,
     };
     res.json(userData);

@@ -21,7 +21,7 @@ export function Navbar() {
   const [showRegister, setShowRegister] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
-  const isAuth = useSelector(checkIsAuth);
+  const isAuth: boolean = useSelector(checkIsAuth);
 
   const onLogin = async (data: AuthFormData) => {
     const result = await dispatch(fetchAuth(data));

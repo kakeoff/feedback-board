@@ -19,7 +19,10 @@ export type UserType = {
   updatedAt: string;
 };
 
-export type UserWithToken = UserType & { token: string };
+export type UserWithToken = {
+  user: UserType;
+  token: string;
+};
 
 export enum LoadingStatus {
   LOADING = "loading",
