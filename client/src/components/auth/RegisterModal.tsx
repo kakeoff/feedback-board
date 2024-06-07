@@ -1,24 +1,33 @@
-import { AuthFormData } from "../Navbar";
+import { useState } from "react";
+import { RegisterFormData } from "../Navbar";
 import { Modalbox } from "../common/Modalbox";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-interface AuthModalProps {
+interface RegisterModalProps {
   onClose: () => void;
-  onLogin: (data: AuthFormData) => void;
+  onRegister: (data: RegisterFormData) => void;
 }
 
-export function AuthModal(props: AuthModalProps) {
+export function RegisterModal(props: RegisterModalProps) {
+  const [avatar, setAvatar] = useState<File | null>(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<AuthFormData>();
+  } = useForm<RegisterFormData>();
 
-  const onSubmit: SubmitHandler<AuthFormData> = (data) => {
-    props.onLogin(data);
+  const onSubmit: SubmitHandler<RegisterFormData> = (
+    data: RegisterFormData
+  ) => {
+    props.onRegister({ ...data, avatar });
+  };
+  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setAvatar(event.target.files[0]);
+    }
   };
   return (
-    <Modalbox width={"300px"} title={"Login"} onClose={props.onClose}>
+    <Modalbox width={"300px"} title={"Register"} onClose={props.onClose}>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="text-[13px] text-gray-500 flex flex-col items-end gap-[10px]"
@@ -37,6 +46,19 @@ export function AuthModal(props: AuthModalProps) {
           )}
         </div>
         <div className="flex flex-col gap-[5px] w-full">
+          <p>Username</p>
+          <input
+            {...register("userName", { required: "Username is required" })}
+            style={errors.userName ? { border: "1px solid red" } : {}}
+            placeholder="Type your username..."
+            className="w-full bg-gray-100 p-[5px] rounded-[6px] focus:outline-none focus:bg-gray-200  transition duration-200"
+            type="text"
+          />
+          {errors.userName && (
+            <span className="text-red-500">{errors.userName.message}</span>
+          )}
+        </div>
+        <div className="flex flex-col gap-[5px] w-full">
           <p>Password</p>
           <input
             {...register("password", { required: "Password is required" })}
@@ -49,6 +71,16 @@ export function AuthModal(props: AuthModalProps) {
             <span className="text-red-500">{errors.password.message}</span>
           )}
         </div>
+        <div className="flex flex-col gap-[5px] w-full">
+          <p>Avatar</p>
+          <input
+            className="w-full bg-gray-100 p-[5px] rounded-[6px] focus:outline-none focus:bg-gray-200  transition duration-200"
+            type="file"
+            accept=".jpg,.gif,.png"
+            onChange={onFileChange}
+          />
+        </div>
+
         <button
           type="submit"
           className="bg-green-100 px-[10px] py-[5px] w-[100px] rounded-[6px] hover:scale-[1.03] hover:bg-green-200 transition duration-200"

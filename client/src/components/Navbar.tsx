@@ -1,11 +1,18 @@
 import { Link } from "react-router-dom";
-import { Modalbox } from "./common/Modalbox";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { AuthModal } from "./auth/AuthModal";
+import { RegisterModal } from "./auth/RegisterModal";
 
 export interface AuthFormData {
   email: string;
   password: string;
+}
+
+export interface RegisterFormData {
+  email: string;
+  userName: string;
+  password: string;
+  avatar: File | null;
 }
 
 export function Navbar() {
@@ -17,9 +24,8 @@ export function Navbar() {
     setShowLogin(false);
   };
 
-  const onRegister = (event: FormEvent) => {
-    event.preventDefault();
-    console.log("Reg logic here");
+  const onRegister = (data: RegisterFormData) => {
+    console.log(data);
     setShowRegister(false);
   };
 
@@ -52,54 +58,10 @@ export function Navbar() {
         <AuthModal onClose={() => setShowLogin(false)} onLogin={onLogin} />
       )}
       {showRegister && (
-        <Modalbox
-          width={"300px"}
-          title={"Register"}
+        <RegisterModal
           onClose={() => setShowRegister(false)}
-        >
-          <form
-            onSubmit={onRegister}
-            className="text-[13px] text-gray-500 flex flex-col items-end gap-[10px]"
-          >
-            <div className="flex flex-col gap-[5px] w-full">
-              <p>Email</p>
-              <input
-                placeholder="Type your username..."
-                className="w-full bg-gray-100 p-[5px] rounded-[6px] focus:outline-none focus:bg-gray-200 transition duration-200"
-                type="text"
-              />
-            </div>
-            <div className="flex flex-col gap-[5px] w-full">
-              <p>Username</p>
-              <input
-                placeholder="Type your username..."
-                className="w-full bg-gray-100 p-[5px] rounded-[6px] focus:outline-none focus:bg-gray-200 transition duration-200"
-                type="text"
-              />
-            </div>
-            <div className="flex flex-col gap-[5px] w-full">
-              <p>Password</p>
-              <input
-                placeholder="Type your password..."
-                className="w-full bg-gray-100 p-[5px] rounded-[6px] focus:outline-none focus:bg-gray-200  transition duration-200"
-                type="password"
-              />
-            </div>
-            <div className="flex flex-col gap-[5px] w-full">
-              <p>Avatar</p>
-              <input
-                className="w-full bg-gray-100 p-[5px] rounded-[6px] focus:outline-none focus:bg-gray-200  transition duration-200"
-                type="file"
-              />
-            </div>
-            <button
-              type="submit"
-              className="bg-green-100 px-[10px] py-[5px] w-[100px] rounded-[6px] hover:scale-[1.03] hover:bg-green-200 transition duration-200"
-            >
-              Submit
-            </button>
-          </form>
-        </Modalbox>
+          onRegister={onRegister}
+        />
       )}
     </>
   );
