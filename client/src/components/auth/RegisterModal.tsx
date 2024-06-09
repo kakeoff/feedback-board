@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { RegisterFormData } from "../Navbar";
+import { RegisterFormDataWithAvatarFile } from "../Navbar";
 import { Modalbox } from "../common/Modalbox";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 interface RegisterModalProps {
   onClose: () => void;
-  onRegister: (data: RegisterFormData) => void;
+  onRegister: (data: RegisterFormDataWithAvatarFile) => void;
+  error: string | null;
 }
 
 export function RegisterModal(props: RegisterModalProps) {
@@ -14,10 +15,10 @@ export function RegisterModal(props: RegisterModalProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormData>();
+  } = useForm<RegisterFormDataWithAvatarFile>();
 
-  const onSubmit: SubmitHandler<RegisterFormData> = (
-    data: RegisterFormData
+  const onSubmit: SubmitHandler<RegisterFormDataWithAvatarFile> = (
+    data: RegisterFormDataWithAvatarFile
   ) => {
     props.onRegister({ ...data, avatar });
   };
@@ -80,7 +81,9 @@ export function RegisterModal(props: RegisterModalProps) {
             onChange={onFileChange}
           />
         </div>
-
+        <div className="w-full">
+          {props.error && <span className="text-red-500">{props.error}</span>}
+        </div>
         <button
           type="submit"
           className="bg-green-100 px-[10px] py-[5px] w-[100px] rounded-[6px] hover:scale-[1.03] hover:bg-green-200 transition duration-200"

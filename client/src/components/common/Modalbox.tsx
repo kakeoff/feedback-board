@@ -19,11 +19,11 @@ export function Modalbox(props: ModalType) {
   }, []);
   return (
     <div
-      onClick={() => props.onClose()}
+      onMouseDown={() => props.onClose()}
       className="fixed w-full h-full inset-0 z-[20] flex justify-center items-center backdrop-blur-sm bg-black/15"
     >
       <div
-        onClick={(event) => event.stopPropagation()}
+        onMouseDown={(event) => event.stopPropagation()}
         style={{ width: props.width }}
         className="bg-white p-[20px] border shadow-lg rounded-[6px]"
       >

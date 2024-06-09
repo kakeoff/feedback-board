@@ -1,8 +1,10 @@
 import cors from "cors";
+import crypto from "crypto";
 import express from "express";
 import fs from "fs";
 import mongoose from "mongoose";
 import multer from "multer";
+import path from "path";
 
 import {
   loginValidation,
@@ -33,16 +35,17 @@ const uploadsDir = "./uploads";
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
-
 const storage = multer.diskStorage({
   destination: (_, __, cb) => {
     cb(null, uploadsDir);
   },
   filename: (_, file, cb) => {
-    cb(null, file.originalname);
+    const key = crypto.randomBytes(16).toString("hex");
+    const ext = path.extname(file.originalname);
+    const fileName = `${key}${ext}`;
+    cb(null, fileName);
   },
 });
-
 const upload = multer({ storage });
 
 app.use(express.json());
@@ -62,10 +65,11 @@ app.post(
   UserController.register
 );
 app.get("/auth/me", checkAuth, UserController.getMe);
+app.patch("/user/me", checkAuth, UserController.updateMe);
 
 app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
   res.json({
-    url: `uploads/${req.file?.originalname}`,
+    url: `uploads/${req.file?.filename}`,
   });
 });
 

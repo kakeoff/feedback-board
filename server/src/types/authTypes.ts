@@ -1,5 +1,5 @@
-import jwt from "jsonwebtoken";
 import { Request } from "express";
+import jwt from "jsonwebtoken";
 
 export interface AuthDto {
   email: string;
@@ -25,4 +25,12 @@ export interface RegisterRequest extends Request {
 
 export interface DecodedToken extends jwt.JwtPayload {
   _id?: string;
+}
+
+export interface UpdateUserRequest extends AuthRequest {
+  body: {
+    email?: string;
+    fullName?: string;
+    avatarUrl?: string;
+  };
 }

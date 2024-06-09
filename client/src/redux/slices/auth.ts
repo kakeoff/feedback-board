@@ -3,6 +3,8 @@ import axios from "../../axios";
 import {
   AuthFormData,
   LoadingStatus,
+  RegisterFormData,
+  UpdateMeData,
   UserType,
   UserWithToken,
 } from "../../types";
@@ -17,6 +19,15 @@ const initialState: AuthState = {
   data: null,
   status: LoadingStatus.LOADING,
 };
+
+export const fetchRegister = createAsyncThunk(
+  "auth/fetchRegister",
+  async (params: RegisterFormData): Promise<UserWithToken> => {
+    const { data } = await axios.post<UserWithToken>("auth/register", params);
+    localStorage.setItem("token", data.token);
+    return data;
+  }
+);
 
 export const fetchAuth = createAsyncThunk(
   "auth/fetchAuth",
@@ -35,6 +46,14 @@ export const fetchMe = createAsyncThunk(
   }
 );
 
+export const updateMe = createAsyncThunk(
+  "auth/updateMe",
+  async (data: UpdateMeData): Promise<UserType> => {
+    const res = await axios.patch<UserType>("user/me", data);
+    return res.data;
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -46,6 +65,19 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchRegister.pending, (state) => {
+        state.data = null;
+        state.status = LoadingStatus.LOADING;
+      })
+      .addCase(fetchRegister.fulfilled, (state, action) => {
+        state.data = action.payload.user;
+        state.status = LoadingStatus.LOADED;
+      })
+      .addCase(fetchRegister.rejected, (state) => {
+        state.data = null;
+        state.status = LoadingStatus.ERROR;
+      })
+
       .addCase(fetchAuth.pending, (state) => {
         state.data = null;
         state.status = LoadingStatus.LOADING;
@@ -69,6 +101,17 @@ const authSlice = createSlice({
       })
       .addCase(fetchMe.rejected, (state) => {
         state.data = null;
+        state.status = LoadingStatus.ERROR;
+      })
+
+      .addCase(updateMe.pending, (state) => {
+        state.status = LoadingStatus.LOADING;
+      })
+      .addCase(updateMe.fulfilled, (state, action) => {
+        state.data = action.payload;
+        state.status = LoadingStatus.LOADED;
+      })
+      .addCase(updateMe.rejected, (state) => {
         state.status = LoadingStatus.ERROR;
       });
   },

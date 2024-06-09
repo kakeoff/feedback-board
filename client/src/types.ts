@@ -33,3 +33,13 @@ export interface AuthFormData {
   email: string;
   password: string;
 }
+export interface RegisterFormData extends AuthFormData {
+  fullName: string;
+  avatarUrl: string | null;
+}
+
+export type UpdateMeData = {
+  email?: string;
+  fullName?: string;
+  avatarUrl?: string | null;
+};

@@ -1,11 +1,21 @@
 import bcrypt from "bcrypt";
 import { Response } from "express";
 import jwt from "jsonwebtoken";
+import { userMapper } from "../mappers/user.mapper";
 import UserModel from "../models/User";
-import { AuthRequest, LoginRequest, RegisterRequest } from "../types/authTypes";
+import {
+  AuthRequest,
+  LoginRequest,
+  RegisterRequest,
+  UpdateUserRequest,
+} from "../types/authTypes";
 
 export const register = async (req: RegisterRequest, res: Response) => {
   try {
+    const userExists = await UserModel.findOne({ email: req.body.email });
+    if (userExists) {
+      return res.status(403).json({ message: "User is already exists" });
+    }
     const password = req.body.password;
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
@@ -29,16 +39,12 @@ export const register = async (req: RegisterRequest, res: Response) => {
       }
     );
     const userData = {
-      id: user._id,
-      email: user.email,
-      fullName: user.fullName,
-      avatarUrl: user.avatarUrl,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      user: userMapper(user),
       token: token,
     };
     res.json(userData);
   } catch (err) {
+    console.error(err);
     return res.status(500).json({ message: "Registration failed" });
   }
 };
@@ -70,14 +76,7 @@ export const login = async (req: LoginRequest, res: Response) => {
     );
 
     const userData = {
-      user: {
-        id: user._id,
-        email: user.email,
-        fullName: user.fullName,
-        avatarUrl: user.avatarUrl,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      },
+      user: userMapper(user),
       token: token,
     };
     res.json(userData);
@@ -92,16 +91,31 @@ export const getMe = async (req: AuthRequest, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const userData = {
-      id: user._id,
-      email: user.email,
-      fullName: user.fullName,
-      avatarUrl: user.avatarUrl,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+    const userData = userMapper(user);
     res.json(userData);
   } catch (err) {
     return res.status(500).json({ message: "Access denied" });
+  }
+};
+
+export const updateMe = async (req: UpdateUserRequest, res: Response) => {
+  try {
+    const userDataToUpdate = {
+      email: req.body.email || undefined,
+      fullName: req.body.fullName || undefined,
+      avatarUrl: req.body.avatarUrl || undefined,
+    };
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      req.userId,
+      userDataToUpdate,
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const userDataToResponse = userMapper(updatedUser);
+    res.json(userDataToResponse);
+  } catch (error) {
+    return res.status(500).json(error);
   }
 };

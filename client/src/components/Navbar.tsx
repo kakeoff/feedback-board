@@ -3,12 +3,19 @@ import { useState } from "react";
 import { AuthModal } from "./auth/AuthModal";
 import { RegisterModal } from "./auth/RegisterModal";
 import { useDispatch, useSelector } from "react-redux";
-import { checkIsAuth, fetchAuth, logout } from "../redux/slices/auth";
+import {
+  checkIsAuth,
+  fetchAuth,
+  fetchRegister,
+  logout,
+  updateMe,
+} from "../redux/slices/auth";
 import { AuthFormData } from "../types";
 import { AppDispatch } from "../redux/store";
 import { ConfirmModal } from "./common/ConfirmModal";
+import { uploadFile } from "../helpers/uploadFile";
 
-export interface RegisterFormData {
+export interface RegisterFormDataWithAvatarFile {
   email: string;
   userName: string;
   password: string;
@@ -20,27 +27,47 @@ export function Navbar() {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
   const isAuth: boolean = useSelector(checkIsAuth);
 
   const onLogin = async (data: AuthFormData) => {
     const result = await dispatch(fetchAuth(data));
     if (fetchAuth.fulfilled.match(result)) {
       setShowLogin(false);
-      setLoginError(null);
+      setAuthError(null);
     } else if (fetchAuth.rejected.match(result)) {
-      setLoginError("Authorization failed. Please check your credentials.");
+      setAuthError("Authorization failed. Please check your credentials.");
     }
   };
 
-  const onRegister = (data: RegisterFormData) => {
-    console.log(data);
-    setShowRegister(false);
+  const onRegister = async (data: RegisterFormDataWithAvatarFile) => {
+    const result = await dispatch(
+      fetchRegister({
+        avatarUrl: null,
+        email: data.email,
+        fullName: data.userName,
+        password: data.password,
+      })
+    );
+    if (fetchRegister.fulfilled.match(result)) {
+      if (data.avatar) {
+        const avatarUrl = await uploadFile(data.avatar);
+        await dispatch(updateMe({ avatarUrl }));
+      }
+      setShowRegister(false);
+      setAuthError(null);
+    } else if (fetchRegister.rejected.match(result)) {
+      if (result.error.code === "ERR_BAD_REQUEST") {
+        setAuthError("Registration failed. User is already exists.");
+        return;
+      }
+      setAuthError("Registration failed. Please check your credentials.");
+    }
   };
 
   const onCloseAuthModal = () => {
     setShowLogin(false);
-    setLoginError(null);
+    setAuthError(null);
   };
 
   const onLogout = () => {
@@ -94,13 +121,14 @@ export function Navbar() {
         <AuthModal
           onClose={onCloseAuthModal}
           onLogin={onLogin}
-          error={loginError}
+          error={authError}
         />
       )}
       {showRegister && (
         <RegisterModal
           onClose={() => setShowRegister(false)}
           onRegister={onRegister}
+          error={authError}
         />
       )}
       {showLogout && (

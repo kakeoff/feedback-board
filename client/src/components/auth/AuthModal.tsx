@@ -50,7 +50,9 @@ export function AuthModal(props: AuthModalProps) {
             <span className="text-red-500">{errors.password.message}</span>
           )}
         </div>
-        {props.error && <span className="text-red-500">{props.error}</span>}
+        <div className="w-full">
+          {props.error && <span className="text-red-500">{props.error}</span>}
+        </div>
         <button
           type="submit"
           className="bg-green-100 px-[10px] py-[5px] w-[100px] rounded-[6px] hover:scale-[1.03] hover:bg-green-200 transition duration-200"
