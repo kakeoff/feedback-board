@@ -107,6 +107,14 @@ export function Navbar() {
               >
                 CREATE POST
               </button>
+              <Link to="/profile">
+                <button
+                  onClick={() => {}}
+                  className="bg-green-300 px-[10px] py-[5px] rounded-[6px] hover:scale-[1.05] hover:bg-green-400 transition duration-200"
+                >
+                  PROFILE
+                </button>
+              </Link>
               <button
                 onClick={() => setShowLogout(true)}
                 className="bg-red-300 px-[10px] py-[5px] rounded-[6px] hover:scale-[1.05] hover:bg-red-400 transition duration-200"

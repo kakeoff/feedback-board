@@ -8,6 +8,7 @@ import { AppDispatch } from "./redux/store";
 import { useEffect } from "react";
 import { fetchMe } from "./redux/slices/auth";
 import { isTokenExists } from "./helpers/checkToken";
+import ProfileView from "./views/ProfileView";
 function App() {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -19,11 +20,14 @@ function App() {
   return (
     <>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<HomeView />} />
-        <Route path="/posts/:id" element={<FullPost />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <div className="pt-[90px]">
+        <Routes>
+          <Route path="/" element={<HomeView />} />
+          <Route path="/posts/:id" element={<FullPost />} />
+          <Route path="/profile" element={<ProfileView />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
     </>
   );
 }

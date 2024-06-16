@@ -27,7 +27,7 @@ export function FullPost() {
       });
   }, []);
   return (
-    <div className="h-full w-full pt-[90px] pb-[30px] px-[15px] md:px-[110px] flex items-center justify-center">
+    <div className="h-full w-full pb-[30px] px-[15px] md:px-[110px] flex items-center justify-center">
       {isLoading || !post ? (
         <PostsScreenLoader itemHeight={700} itemsCount={1} />
       ) : (

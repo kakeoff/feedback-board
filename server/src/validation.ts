@@ -17,3 +17,9 @@ export const postCreateValidation = [
   body("tags", "Invalid tags format").optional().isString(),
   body("imageUrl", "Invalid image link").optional().isString(),
 ];
+
+export const updateMeValidation = [
+  body("email", "Invalid email format").optional().isEmail(),
+  body("avatarUrl", "Invalid avatar link").optional(),
+  body("fullName", "Invalid fullName format").optional().isString(),
+];

@@ -10,6 +10,7 @@ import {
   loginValidation,
   postCreateValidation,
   registerValidation,
+  updateMeValidation,
 } from "./validation";
 
 import { PostController, UserController } from "./controllers/index";
@@ -65,7 +66,13 @@ app.post(
   UserController.register
 );
 app.get("/auth/me", checkAuth, UserController.getMe);
-app.patch("/user/me", checkAuth, UserController.updateMe);
+app.patch(
+  "/user/me",
+  checkAuth,
+  updateMeValidation,
+  handleValidationErrors,
+  UserController.updateMe
+);
 
 app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
   res.json({
