@@ -4,6 +4,7 @@ import { mdiLoading } from "@mdi/js";
 interface LoaderProps {
   itemsCount: number;
   itemHeight: number;
+  showSpinner: boolean;
 }
 
 export function PostsScreenLoader(props: LoaderProps) {
@@ -15,12 +16,14 @@ export function PostsScreenLoader(props: LoaderProps) {
           className="bg-gray-200 animate-pulse border-[1px] shadow-lg p-[10px] w-full flex justify-center items-center rounded-[8px]"
           style={{ height: props.itemHeight }}
         >
-          <Icon
-            className="animate-spin"
-            path={mdiLoading}
-            size={3}
-            color="gray"
-          />
+          {props.showSpinner && (
+            <Icon
+              className="animate-spin"
+              path={mdiLoading}
+              size={3}
+              color="gray"
+            />
+          )}
         </div>
       ))}
     </div>

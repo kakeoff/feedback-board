@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import PostModel from "../models/Post";
-import { CreateOrUpdatePostRequest } from "../types/postTypes";
+import {
+  CreateOrUpdatePostRequest,
+  RequestWithUserId,
+} from "../types/postTypes";
 
 export const getLastTags = async (req: Request, res: Response) => {
   try {
@@ -19,6 +22,38 @@ export const getLastTags = async (req: Request, res: Response) => {
 export const getAll = async (req: Request, res: Response) => {
   try {
     const posts = await PostModel.find().populate("user").exec();
+    const mappedPosts = posts.map((post) => {
+      return {
+        id: post._id,
+        text: post.text,
+        title: post.title,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+        viewsCount: post.viewsCount,
+        imageUrl: post.imageUrl,
+        tags: post.tags,
+        user: {
+          id: post.user._id,
+          fullName: post.user.fullName,
+          email: post.user.email,
+          avatarUrl: post.user.avatarUrl,
+        },
+      };
+    });
+    res.json(mappedPosts);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Failed to get posts" });
+  }
+};
+
+export const getMyPosts = async (req: RequestWithUserId, res: Response) => {
+  const userId = req.userId;
+  if (!userId) return res.status(403).json({ message: "User not found" });
+  try {
+    const posts = await PostModel.find({ user: userId })
+      .populate("user")
+      .exec();
     const mappedPosts = posts.map((post) => {
       return {
         id: post._id,
@@ -84,13 +119,15 @@ export const getOne = async (req: Request, res: Response) => {
 };
 
 export const create = async (req: CreateOrUpdatePostRequest, res: Response) => {
+  const userId = req.userId;
+  if (!userId) return res.status(403).json({ message: "User not found" });
   try {
     const doc = new PostModel({
       title: req.body.title,
       text: req.body.text,
       tags: req.body.tags,
       imageUrl: req.body.imageUrl,
-      user: req.userId,
+      user: userId,
     });
 
     const post = await doc.save();
@@ -136,6 +173,8 @@ export const remove = async (req: Request, res: Response) => {
 export const update = async (req: CreateOrUpdatePostRequest, res: Response) => {
   try {
     const postId = req.params.id;
+    const userId = req.userId;
+    if (!userId) return res.status(403).json({ message: "User not found" });
     const post = await PostModel.updateOne(
       {
         _id: postId,
@@ -145,7 +184,7 @@ export const update = async (req: CreateOrUpdatePostRequest, res: Response) => {
         text: req.body.text,
         tags: req.body.tags,
         imageUrl: req.body.imageUrl,
-        user: req.userId,
+        user: userId,
       }
     );
     res.json({ success: true });

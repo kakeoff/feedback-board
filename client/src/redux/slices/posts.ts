@@ -21,6 +21,14 @@ export const fetchPosts = createAsyncThunk(
   }
 );
 
+export const fetchMyPosts = createAsyncThunk(
+  "posts/fetchMyPosts",
+  async (): Promise<PostType[]> => {
+    const { data } = await axios.get<PostType[]>("/posts/my");
+    return data;
+  }
+);
+
 export const fetchTags = createAsyncThunk(
   "posts/fetchTags",
   async (): Promise<String[]> => {
@@ -55,6 +63,19 @@ const postsSlice = createSlice({
         state.posts.status = LoadingStatus.LOADED;
       })
       .addCase(fetchPosts.rejected, (state) => {
+        state.posts.items = [];
+        state.posts.status = LoadingStatus.ERROR;
+      })
+
+      .addCase(fetchMyPosts.pending, (state) => {
+        state.posts.items = [];
+        state.posts.status = LoadingStatus.LOADING;
+      })
+      .addCase(fetchMyPosts.fulfilled, (state, action) => {
+        state.posts.items = action.payload;
+        state.posts.status = LoadingStatus.LOADED;
+      })
+      .addCase(fetchMyPosts.rejected, (state) => {
         state.posts.items = [];
         state.posts.status = LoadingStatus.ERROR;
       })

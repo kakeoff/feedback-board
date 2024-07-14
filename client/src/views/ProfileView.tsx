@@ -2,22 +2,37 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../redux/store";
 import {
   mdiAccountOutline,
+  mdiArrowRight,
   mdiCalendarCheckOutline,
   mdiCamera,
   mdiEmailOutline,
+  mdiLink,
   mdiPostOutline,
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useRef } from "react";
 import { uploadFile } from "../helpers/uploadFile";
 import { updateMe } from "../redux/slices/auth";
-import { UpdateMeData } from "../types";
+import { LoadingStatus, PostType, UpdateMeData } from "../types";
+import React from "react";
+import { fetchMyPosts } from "../redux/slices/posts";
+import { PostsScreenLoader } from "../components/posts/PostsScreenLoader";
+import { useNavigate } from "react-router-dom";
+
+interface PostsListProps {
+  posts: PostType[];
+}
 
 function ProfileView() {
   const dispatch = useDispatch<AppDispatch>();
+  const posts = useSelector((state: RootState) => state.posts);
   const userData = useSelector((state: RootState) => state.auth.data);
   const avatarUrl = `http://localhost:3001/${userData?.avatarUrl}`;
   const inputRef = useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    dispatch(fetchMyPosts());
+  }, []);
 
   const handleClickAvatar = (): void => {
     if (inputRef.current) {
@@ -58,7 +73,7 @@ function ProfileView() {
           <img
             className="w-full h-full object-cover"
             src={avatarUrl}
-            alt="user avatar"
+            alt="avatar"
           />
         </div>
         <div className="text-[25px] text-left flex justify-start gap-[10px] flex-col">
@@ -92,58 +107,45 @@ function ProfileView() {
           <p>My posts</p>
         </div>
         <div className="h-full w-full flex flex-col gap-[10px] overflow-auto py-[10px]">
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
-          <div className="shadow-md rounded-[8px] hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200">
-            PostName
-          </div>
+          {posts.posts.status !== LoadingStatus.LOADED ? (
+            <PostsScreenLoader
+              itemsCount={10}
+              itemHeight={50}
+              showSpinner={false}
+            />
+          ) : (
+            <PostsList posts={posts.posts.items} />
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+const PostsList: React.FC<PostsListProps> = ({ posts }) => {
+  const navigate = useNavigate();
+
+  const gotoPost = (id: string) => {
+    navigate(`/posts/${id}`);
+  };
+  return (
+    <>
+      {posts.map((post) => (
+        <div
+          key={post.id}
+          className="shadow-md rounded-[8px] group relative hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200"
+        >
+          <span>{post.title}</span>
+          <button
+            onClick={() => gotoPost(post.id)}
+            className="bg-green-300 p-[5px] hidden group-hover:block absolute top-[8px] right-[8px] py-[5px] rounded-[6px] hover:scale-[1.05] hover:bg-green-400 transition duration-200"
+          >
+            <Icon path={mdiArrowRight} size={0.8} color="black" />
+          </button>
+        </div>
+      ))}
+    </>
+  );
+};
 
 export default ProfileView;

@@ -8,8 +8,11 @@ export interface CreateOrUpdatePostDto {
   imageUrl: string;
 }
 
-export interface CreateOrUpdatePostRequest extends Request {
+export interface RequestWithUserId extends Request {
   userId?: string;
+}
+
+export interface CreateOrUpdatePostRequest extends RequestWithUserId {
   body: CreateOrUpdatePostDto;
 }
 

@@ -20,7 +20,11 @@ export function HomeView() {
     <div className="pb-[30px] px-[20px] md:px-[150px]">
       <div className="flex md:flex-row flex-col-reverse justify-between gap-[20px]">
         {isPostsLoading ? (
-          <PostsScreenLoader itemHeight={300} itemsCount={3} />
+          <PostsScreenLoader
+            showSpinner={false}
+            itemHeight={300}
+            itemsCount={3}
+          />
         ) : (
           <PostsScreen posts={posts} />
         )}
