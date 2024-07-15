@@ -6,11 +6,10 @@ import {
   mdiCalendarCheckOutline,
   mdiCamera,
   mdiEmailOutline,
-  mdiLink,
   mdiPostOutline,
 } from "@mdi/js";
 import Icon from "@mdi/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { uploadFile } from "../helpers/uploadFile";
 import { updateMe } from "../redux/slices/auth";
 import { LoadingStatus, PostType, UpdateMeData } from "../types";
@@ -18,6 +17,7 @@ import React from "react";
 import { fetchMyPosts } from "../redux/slices/posts";
 import { PostsScreenLoader } from "../components/posts/PostsScreenLoader";
 import { useNavigate } from "react-router-dom";
+import { ConfirmModal } from "../components/common/ConfirmModal";
 
 interface PostsListProps {
   posts: PostType[];
@@ -29,6 +29,7 @@ function ProfileView() {
   const userData = useSelector((state: RootState) => state.auth.data);
   const avatarUrl = `http://localhost:3001/${userData?.avatarUrl}`;
   const inputRef = useRef<HTMLInputElement>(null);
+  const [showResetAvatar, setShowResetAvatar] = useState(false);
 
   React.useEffect(() => {
     dispatch(fetchMyPosts());
@@ -41,7 +42,8 @@ function ProfileView() {
   };
 
   const onUpdateMe = async (data: UpdateMeData): Promise<void> => {
-    dispatch(updateMe(data));
+    await dispatch(updateMe(data));
+    setShowResetAvatar(false);
   };
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -93,9 +95,8 @@ function ProfileView() {
             </p>
           </div>
           <button
-            onClick={() =>
-              onUpdateMe({ avatarUrl: "uploads/default/default.png" })
-            }
+            className="bg-blue-300 px-[10px] py-[5px] text-[20px] rounded-[6px] hover:scale-[1.05] hover:bg-blue-400 transition duration-200"
+            onClick={() => setShowResetAvatar(true)}
           >
             RESET AVATAR
           </button>
@@ -118,6 +119,16 @@ function ProfileView() {
           )}
         </div>
       </div>
+      {showResetAvatar && (
+        <ConfirmModal
+          text="Are you sure you want to reset avatar?"
+          title="Reset avatar"
+          onClose={() => setShowResetAvatar(false)}
+          onSubmit={() =>
+            onUpdateMe({ avatarUrl: "uploads/default/default.png" })
+          }
+        />
+      )}
     </div>
   );
 }
