@@ -16,7 +16,7 @@ export function PostCard(props: PostCardProps) {
     <div className="w-full min-w-[350px] group hover:translate-y-[-5px] transition duration-300 flex flex-col rounded-[8px] shadow-lg border overflow-hidden">
       {props.post.imageUrl && (
         <img
-          className="w-[100%] h-[300px] object-cover"
+          className="w-[100%] h-[600px] object-cover"
           src={`${url}/${props.post.imageUrl}`}
           alt="post img"
         />

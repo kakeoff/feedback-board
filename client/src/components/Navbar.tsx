@@ -43,7 +43,7 @@ export function Navbar() {
   const onRegister = async (data: RegisterFormDataWithAvatarFile) => {
     const result = await dispatch(
       fetchRegister({
-        avatarUrl: null,
+        avatarUrl: "uploads/default/default.png",
         email: data.email,
         fullName: data.userName,
         password: data.password,

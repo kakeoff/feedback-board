@@ -18,6 +18,7 @@ import { fetchMyPosts } from "../redux/slices/posts";
 import { PostsScreenLoader } from "../components/posts/PostsScreenLoader";
 import { useNavigate } from "react-router-dom";
 import { ConfirmModal } from "../components/common/ConfirmModal";
+import UserDataLoader from "../components/auth/UserDataLoader";
 
 interface PostsListProps {
   posts: PostType[];
@@ -26,6 +27,9 @@ interface PostsListProps {
 function ProfileView() {
   const dispatch = useDispatch<AppDispatch>();
   const posts = useSelector((state: RootState) => state.posts);
+  const isUserLoading = useSelector(
+    (state: RootState) => state.auth.status === LoadingStatus.LOADING
+  );
   const userData = useSelector((state: RootState) => state.auth.data);
   const avatarUrl = `http://localhost:3001/${userData?.avatarUrl}`;
   const inputRef = useRef<HTMLInputElement>(null);
@@ -57,8 +61,8 @@ function ProfileView() {
   };
 
   return (
-    <div className="flex w-full items-start h-[calc(100vh-110px)] pb-[10px] overflow-hidden justify-between gap-[20px] px-[100px]">
-      <div className="bg-gray-100 border rounded-[8px] flex flex-col gap-[20px] items-center p-[20px] shadow-md h-full">
+    <div className="flex w-full items-start h-full pb-[10px] overflow-hidden justify-between gap-[20px] px-[100px]">
+      <div className="bg-gray-100 border rounded-[8px] min-w-[400px] flex flex-col gap-[20px] items-center p-[20px] shadow-md h-full">
         <div className="w-[300px] h-[300px] flex-none overflow-hidden relative group rounded-[100%] shadow-md border-[1px] border-gray-500">
           <div onClick={handleClickAvatar} className="absolute w-full h-full">
             <div className="opacity-0 group-hover:opacity-100 flex transition-opacity duration-300 ease-in-out justify-center items-center w-full h-full bg-black/50 cursor-pointer">
@@ -78,29 +82,48 @@ function ProfileView() {
             alt="avatar"
           />
         </div>
-        <div className="text-[25px] text-left flex justify-start gap-[10px] flex-col">
-          <div className="flex items-center gap-[5px]">
-            <Icon path={mdiAccountOutline} size={2} color="black" />
-            <p>{userData?.fullName}</p>
+        {isUserLoading ? (
+          <UserDataLoader />
+        ) : (
+          <div className="text-[25px] text-left flex justify-start w-full gap-[10px] flex-col">
+            <div className="flex items-center gap-[5px]">
+              <Icon
+                className="flex-none"
+                path={mdiAccountOutline}
+                size={2}
+                color="black"
+              />
+              <p className="truncate">{userData?.fullName}</p>
+            </div>
+            <div className="flex items-center gap-[5px]">
+              <Icon
+                className="flex-none"
+                path={mdiEmailOutline}
+                size={2}
+                color="black"
+              />
+              <p className="truncate">{userData?.email}</p>
+            </div>
+            <div className="flex items-center gap-[5px]">
+              <Icon
+                className="flex-none"
+                path={mdiCalendarCheckOutline}
+                size={2}
+                color="black"
+              />
+              <p>
+                {userData?.createdAt &&
+                  new Date(userData.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+            <button
+              className="bg-blue-300 px-[10px] py-[5px] text-[20px] rounded-[6px] hover:scale-[1.05] w-full hover:bg-blue-400 transition duration-200"
+              onClick={() => setShowResetAvatar(true)}
+            >
+              RESET AVATAR
+            </button>
           </div>
-          <div className="flex items-center gap-[5px]">
-            <Icon path={mdiEmailOutline} size={2} color="black" />
-            <p>{userData?.email}</p>
-          </div>
-          <div className="flex items-center gap-[5px]">
-            <Icon path={mdiCalendarCheckOutline} size={2} color="black" />
-            <p>
-              {userData?.createdAt &&
-                new Date(userData.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-          <button
-            className="bg-blue-300 px-[10px] py-[5px] text-[20px] rounded-[6px] hover:scale-[1.05] hover:bg-blue-400 transition duration-200"
-            onClick={() => setShowResetAvatar(true)}
-          >
-            RESET AVATAR
-          </button>
-        </div>
+        )}
       </div>
       <div className="bg-gray-100 border rounded-[8px] w-full flex flex-col gap-[20px] items-center p-[20px] shadow-md h-full">
         <div className="flex items-center text-[25px] gap-[5px]">
