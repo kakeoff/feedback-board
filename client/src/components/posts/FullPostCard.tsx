@@ -1,6 +1,8 @@
 import { PostType } from "../../types";
 import { mdiEyeOutline, mdiUpdate, mdiCalendarCheckOutline } from "@mdi/js";
 import Icon from "@mdi/react";
+import { MDXEditor } from "@mdxeditor/editor";
+import "@mdxeditor/editor/style.css";
 
 interface FullPostCardProps {
   post: PostType;
@@ -16,30 +18,35 @@ export function FullPostCard(props: FullPostCardProps) {
     <div className="w-full min-w-[350px] flex flex-col rounded-[8px] shadow-lg border overflow-hidden">
       {props.post.imageUrl && (
         <img
-          className="w-[100%] h-[500px] object-cover"
+          className="w-[100%] h-[700px] object-cover"
           src={`${url}/${props.post.imageUrl}`}
           alt="post img"
         />
       )}
 
       <div className="bg-gray-100 p-[10px] flex flex-col gap-[8px]">
-        <p className="font-[700] text-[21px]">{props.post.title}</p>
-        <p>{props.post.text}</p>
-        <div className="flex gap-[5px] items-center">
-          <Icon path={mdiCalendarCheckOutline} size={1} color="black" />
-          <p className="font-[700] text-[13px]">Published {createdAt}</p>
+        <p className="font-[700] text-[35px]">{props.post.title}</p>
+        <div className="flex flex-wrap text-[25px] gap-[10px]">
+          <div className="flex gap-[5px]  items-center">
+            <Icon path={mdiCalendarCheckOutline} size={1} color="black" />
+            <p className="font-[700]">Published {createdAt}</p>
+          </div>
+          <div className="flex flex-wrap gap-[5px]">
+            {props.post.tags.map((tag) => (
+              <span
+                key={tag}
+                className="bg-blue-100 px-[5px] py-[2px] rounded-[4px]"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
         </div>
-
-        <div className="flex flex-wrap gap-[5px]">
-          {props.post.tags.map((tag) => (
-            <span
-              key={tag}
-              className="bg-blue-100 px-[5px] py-[2px] rounded-[4px]"
-            >
-              #{tag}
-            </span>
-          ))}
-        </div>
+        <MDXEditor
+          className="text-[25px]"
+          markdown={props.post.text}
+          readOnly={true}
+        />
         <div className="flex justify-between items-center mt-[20px]">
           <div className="flex flex-row gap-[10px] items-center">
             <img

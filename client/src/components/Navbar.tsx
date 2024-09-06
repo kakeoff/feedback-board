@@ -101,12 +101,14 @@ export function Navbar() {
           )}
           {isAuth && (
             <div className="flex flex-row gap-[5px] font-[700] text-[13px]">
-              <button
-                onClick={() => {}}
-                className="bg-blue-300 px-[10px] py-[5px] rounded-[6px] hover:scale-[1.05] hover:bg-blue-400 transition duration-200"
-              >
-                CREATE POST
-              </button>
+              <Link to="/posts/new">
+                <button
+                  onClick={() => {}}
+                  className="bg-blue-300 px-[10px] py-[5px] rounded-[6px] hover:scale-[1.05] hover:bg-blue-400 transition duration-200"
+                >
+                  CREATE POST
+                </button>
+              </Link>
               <Link to="/profile">
                 <button
                   onClick={() => {}}
