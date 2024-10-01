@@ -44,7 +44,7 @@ export function PostCard(props: PostCardProps) {
         <div className="flex justify-between items-center mt-[20px]">
           <div className="flex flex-row gap-[5px] items-center">
             <img
-              className="w-[24px] h-[24px] object-contain rounded-[100%]"
+              className="w-[24px] h-[24px] object-cover border-[1px] rounded-[100%]"
               src={`${url}/${props.post.user.avatarUrl}`}
               alt="avatar"
             />

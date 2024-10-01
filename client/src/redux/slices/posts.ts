@@ -1,11 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "../../axios";
+import { PostDto } from "../../dto";
 import { LoadingStatus, PostType } from "../../types";
 
 interface PostsState {
   posts: {
     items: PostType[];
     status: LoadingStatus;
+    createError: string | null;
   };
   tags: {
     items: String[];
@@ -18,6 +20,18 @@ export const fetchPosts = createAsyncThunk(
   async (): Promise<PostType[]> => {
     const { data } = await axios.get<PostType[]>("/posts");
     return data;
+  }
+);
+
+export const createPost = createAsyncThunk(
+  "posts/createPost",
+  async (dto: PostDto): Promise<PostType> => {
+    try {
+      const { data } = await axios.post<PostType>("/posts", dto);
+      return data;
+    } catch (error) {
+      throw error;
+    }
   }
 );
 
@@ -41,6 +55,7 @@ const initialState: PostsState = {
   posts: {
     items: [],
     status: LoadingStatus.LOADING,
+    createError: null,
   },
   tags: {
     items: [],
@@ -78,6 +93,18 @@ const postsSlice = createSlice({
       .addCase(fetchMyPosts.rejected, (state) => {
         state.posts.items = [];
         state.posts.status = LoadingStatus.ERROR;
+      })
+
+      .addCase(createPost.pending, (state, _) => {
+        if (state.posts.createError) state.posts.createError = null;
+      })
+
+      .addCase(createPost.fulfilled, (state, action) => {
+        state.posts.items.push(action.payload);
+        if (state.posts.createError) state.posts.createError = null;
+      })
+      .addCase(createPost.rejected, (state, action) => {
+        state.posts.createError;
       })
 
       .addCase(fetchTags.pending, (state) => {

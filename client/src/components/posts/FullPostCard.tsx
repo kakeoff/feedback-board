@@ -3,6 +3,7 @@ import { mdiEyeOutline, mdiUpdate, mdiCalendarCheckOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { MDXEditor } from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
+import { Editor } from "../common/editor/Editor";
 
 interface FullPostCardProps {
   post: PostType;
@@ -26,10 +27,10 @@ export function FullPostCard(props: FullPostCardProps) {
 
       <div className="bg-gray-100 p-[10px] flex flex-col gap-[8px]">
         <p className="font-[700] text-[35px]">{props.post.title}</p>
-        <div className="flex flex-wrap text-[25px] gap-[10px]">
-          <div className="flex gap-[5px]  items-center">
-            <Icon path={mdiCalendarCheckOutline} size={1} color="black" />
-            <p className="font-[700]">Published {createdAt}</p>
+        <div className="flex flex-col flex-wrap text-[25px] gap-[10px]">
+          <div className="flex gap-[5px] items-center">
+            <Icon path={mdiCalendarCheckOutline} size={1.5} color="black" />
+            <p className="font-[500]">Published {createdAt}</p>
           </div>
           <div className="flex flex-wrap gap-[5px]">
             {props.post.tags.map((tag) => (
@@ -42,15 +43,12 @@ export function FullPostCard(props: FullPostCardProps) {
             ))}
           </div>
         </div>
-        <MDXEditor
-          className="text-[25px]"
-          markdown={props.post.text}
-          readOnly={true}
-        />
+        <div className="my-[20px] h-[1px] bg-gray-300" />
+        <Editor markdown={props.post.text} readOnly={true} />
         <div className="flex justify-between items-center mt-[20px]">
           <div className="flex flex-row gap-[10px] items-center">
             <img
-              className="w-[32px] h-[32px] object-contain rounded-[100%]"
+              className="w-[32px] h-[32px] object-cover border-[1px] rounded-[100%]"
               src={`${url}/${props.post.user.avatarUrl}`}
               alt="avatar"
             />

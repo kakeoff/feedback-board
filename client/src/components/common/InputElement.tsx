@@ -1,5 +1,6 @@
 type InputElementPropsType = {
   placeholder: string;
+  type: string;
   onChange: (value: string) => void;
   customClassName?: string;
 };
@@ -12,8 +13,9 @@ function InputElement(props: InputElementPropsType) {
     <>
       <input
         placeholder={props.placeholder}
+        type={props.type}
         onChange={handleChange}
-        className={`px-[15px] py-[10px] w-full bg-white shadow-md rounded-[6px] ${
+        className={`px-[15px] py-[10px] border-[2px] w-full bg-white shadow-md rounded-[6px] ${
           props.customClassName ?? ""
         }`}
       />

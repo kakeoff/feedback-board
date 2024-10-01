@@ -85,12 +85,12 @@ function ProfileView() {
         {isUserLoading ? (
           <UserDataLoader />
         ) : (
-          <div className="text-[25px] text-left flex justify-start w-full gap-[10px] flex-col">
+          <div className="text-[20px] text-left flex justify-start w-full gap-[10px] flex-col">
             <div className="flex items-center gap-[5px]">
               <Icon
                 className="flex-none"
                 path={mdiAccountOutline}
-                size={2}
+                size={1.5}
                 color="black"
               />
               <p className="truncate">{userData?.fullName}</p>
@@ -99,7 +99,7 @@ function ProfileView() {
               <Icon
                 className="flex-none"
                 path={mdiEmailOutline}
-                size={2}
+                size={1.5}
                 color="black"
               />
               <p className="truncate">{userData?.email}</p>
@@ -108,10 +108,11 @@ function ProfileView() {
               <Icon
                 className="flex-none"
                 path={mdiCalendarCheckOutline}
-                size={2}
+                size={1.5}
                 color="black"
               />
               <p>
+                Created at {""}
                 {userData?.createdAt &&
                   new Date(userData.createdAt).toLocaleDateString()}
               </p>
