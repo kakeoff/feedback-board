@@ -7,23 +7,23 @@ interface PostCardProps {
 }
 
 export function PostCard(props: PostCardProps) {
-  const url = "http://localhost:3001";
+  const url = import.meta.env.VITE_SERVER_URL;
 
   const createdAt = new Date(props.post.createdAt).toLocaleDateString();
   const updatedAt = new Date(props.post.updatedAt).toLocaleString();
 
   return (
-    <div className="w-full min-w-[350px] group hover:translate-y-[-5px] transition duration-300 flex flex-col rounded-[8px] shadow-lg border overflow-hidden">
+    <div className="w-full min-w-[350px] group transition duration-300 flex flex-col rounded-[8px] shadow-lg border overflow-hidden">
       {props.post.imageUrl && (
         <img
-          className="w-[100%] h-[600px] object-cover"
-          src={`${url}/${props.post.imageUrl}`}
+          className="w-[100%] h-[300px] object-cover"
+          src={`${url}${props.post.imageUrl}`}
           alt="post img"
         />
       )}
 
-      <div className="bg-gray-100 group-hover:bg-gray-200 transition duration-200 p-[10px] flex flex-col gap-[8px]">
-        <p className="font-[700] text-[21px] line-clamp-2">
+      <div className="bg-gray-100 group-hover:bg-gray-200 transition overflow-hidden duration-200 p-[10px] flex flex-col gap-[8px]">
+        <p className="font-[700] text-[21px] line-clamp-2 break-words">
           {props.post.title}
         </p>
         <div className="flex gap-[5px] items-center">
@@ -45,7 +45,7 @@ export function PostCard(props: PostCardProps) {
           <div className="flex flex-row gap-[5px] items-center">
             <img
               className="w-[24px] h-[24px] object-cover border-[1px] rounded-[100%]"
-              src={`${url}/${props.post.user.avatarUrl}`}
+              src={`${url}${props.post.user.avatarUrl}`}
               alt="avatar"
             />
             <p className="font-[700] text-[13px]">{props.post.user.fullName}</p>

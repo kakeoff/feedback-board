@@ -7,12 +7,13 @@ import {
 
 export const getLastTags = async (req: Request, res: Response) => {
   try {
-    const posts = await PostModel.find().limit(5).exec();
+    const posts = await PostModel.find().limit(10).exec();
     const tags = posts
       .map((post) => post.tags)
       .flat()
-      .slice(0, 5);
-    res.json(tags);
+      .slice(0, 10);
+    const uniqueItems = [...new Set(tags)];
+    res.json(uniqueItems);
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Failed to get tags" });
@@ -21,7 +22,10 @@ export const getLastTags = async (req: Request, res: Response) => {
 
 export const getAll = async (req: Request, res: Response) => {
   try {
-    const posts = await PostModel.find().populate("user").exec();
+    const posts = await PostModel.find()
+      .populate("user")
+      .sort([["createdAt", -1]])
+      .exec();
     const mappedPosts = posts.map((post) => {
       return {
         id: post._id,

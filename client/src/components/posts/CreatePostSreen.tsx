@@ -10,6 +10,7 @@ import { createPost } from "../../redux/slices/posts";
 import { mdiLoading } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useNavigate } from "react-router-dom";
+import { PostValidationError } from "../../types";
 
 function CreatePostScreen() {
   const dispatch = useDispatch<AppDispatch>();
@@ -17,7 +18,9 @@ function CreatePostScreen() {
   const [md, setMd] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isCreating, setIsCreating] = useState<boolean>(false);
-
+  const [errors, setErrors] = useState<
+    PostValidationError[] | string[] | undefined
+  >([]);
   const navigate = useNavigate();
   const handleChangeTitle = (value: string): void => {
     setTitle(value);
@@ -28,7 +31,6 @@ function CreatePostScreen() {
   };
 
   const handleChangeFile = (value: File | null): void => {
-    console.log(value);
     setImageFile(value);
   };
 
@@ -45,16 +47,15 @@ function CreatePostScreen() {
       imageUrl,
     };
     const result = await dispatch(createPost(data));
+
     if (createPost.fulfilled.match(result)) {
       navigate(`/posts/${result.payload.id}`);
     } else if (createPost.rejected.match(result)) {
-      setIsCreating(false);
-      if (result.error.code === "ERR_BAD_REQUEST") {
-        alert("Creating failed. Check fields validation.");
-        return;
-      }
-      alert("Error while creating post");
+      setErrors(result.payload);
+    } else if (createPost.pending.match(result)) {
+      setErrors([]);
     }
+    setIsCreating(false);
   };
 
   return (
@@ -70,6 +71,12 @@ function CreatePostScreen() {
       />
       <div className="border-[2px] rounded-b-[6px] rounded-t-[8px]">
         <Editor handleChange={handleChangeMd} markdown={md} />
+      </div>
+      <div className="text-[16px] ml-auto text-red-500">
+        {errors &&
+          errors.map((err, index) => (
+            <div key={index}>{typeof err === "string" ? err : err.msg}</div>
+          ))}
       </div>
       <button
         onClick={handleCreatePost}

@@ -1,9 +1,8 @@
 import axios, { AxiosInstance } from "axios";
 
 const instance: AxiosInstance = axios.create({
-  baseURL: "http://localhost:3001",
+  baseURL: import.meta.env.VITE_SERVER_URL,
 });
-
 instance.interceptors.request.use((config) => {
   config.headers.Authorization = localStorage.getItem("token");
   return config;

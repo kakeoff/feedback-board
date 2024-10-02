@@ -77,7 +77,7 @@ export function Navbar() {
   return (
     <>
       <nav className="w-full flex fixed z-[10] bg-white justify-center pt-[10px]">
-        <div className="w-full mx-[15px] md:mx-[100px] p-[10px] rounded-[6px] flex justify-between items-center border-[1px] shadow-lg">
+        <div className="w-full mx-[15px] lg:mx-[100px] p-[10px] rounded-[6px] flex justify-between items-center border-[1px] shadow-lg">
           <Link to="/">
             <span className="font-[700] transition duration-200 hover:text-blue-900">
               MERN-POSTS

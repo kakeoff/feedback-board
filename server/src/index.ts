@@ -1,10 +1,13 @@
 import cors from "cors";
 import crypto from "crypto";
+import dotenv from "dotenv";
 import express from "express";
 import fs from "fs";
 import mongoose from "mongoose";
 import multer from "multer";
 import path from "path";
+
+dotenv.config();
 
 import {
   loginValidation,
@@ -19,9 +22,7 @@ import checkAuth from "./utils/checkAuth";
 import handleValidationErrors from "./utils/handleValidationErrors";
 
 mongoose
-  .connect(
-    "mongodb+srv://admin:admin@mern-posts-db.rvisudm.mongodb.net/?retryWrites=true&w=majority&appName=mern-posts-db"
-  )
+  .connect(process.env.DB_URL || "")
   .then(() => {
     console.log("Database connected.");
   })

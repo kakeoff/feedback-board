@@ -13,8 +13,8 @@ export const loginValidation = [
 
 export const postCreateValidation = [
   body("title", "Title must be longer 3 symbols").isLength({ min: 3 }),
-  body("text", "Password must be longer 10 symbols").isLength({ min: 10 }),
-  body("tags", "Invalid tags format").optional().isString(),
+  body("text", "Text must be longer 10 symbols").isLength({ min: 10 }),
+  body("tags", "Invalid tags format").optional().isArray(),
   body("imageUrl", "Invalid image link").optional().isString(),
 ];
 

@@ -17,17 +17,19 @@ export function HomeView() {
   }, []);
 
   return (
-    <div className="pb-[30px] px-[20px] md:px-[150px]">
+    <div className="pb-[30px] px-[20px] lg:px-[200px]">
       <div className="flex md:flex-row flex-col-reverse justify-between gap-[20px]">
-        {isPostsLoading ? (
-          <PostsScreenLoader
-            showSpinner={false}
-            itemHeight={300}
-            itemsCount={3}
-          />
-        ) : (
-          <PostsScreen posts={posts} />
-        )}
+        <div className="w-full overflow-hidden h-full px-[10px]">
+          {isPostsLoading ? (
+            <PostsScreenLoader
+              showSpinner={false}
+              itemHeight={300}
+              itemsCount={3}
+            />
+          ) : (
+            <PostsScreen posts={posts} />
+          )}
+        </div>
         <TagsList tags={tags} />
       </div>
     </div>

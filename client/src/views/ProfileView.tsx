@@ -31,7 +31,7 @@ function ProfileView() {
     (state: RootState) => state.auth.status === LoadingStatus.LOADING
   );
   const userData = useSelector((state: RootState) => state.auth.data);
-  const avatarUrl = `http://localhost:3001/${userData?.avatarUrl}`;
+  const avatarUrl = `${import.meta.env.VITE_SERVER_URL}${userData?.avatarUrl}`;
   const inputRef = useRef<HTMLInputElement>(null);
   const [showResetAvatar, setShowResetAvatar] = useState(false);
 
@@ -126,12 +126,12 @@ function ProfileView() {
           </div>
         )}
       </div>
-      <div className="bg-gray-100 border rounded-[8px] w-full flex flex-col gap-[20px] items-center p-[20px] shadow-md h-full">
+      <div className="bg-gray-100 border rounded-[8px] overflow-x-hidden w-full flex flex-col gap-[20px] items-center p-[20px] shadow-md h-full">
         <div className="flex items-center text-[25px] gap-[5px]">
           <Icon path={mdiPostOutline} size={2} color="black" />
           <p>My posts</p>
         </div>
-        <div className="h-full w-full flex flex-col gap-[10px] overflow-auto py-[10px]">
+        <div className="h-full w-full flex flex-col gap-[10px] overflow-y-auto overflow-x-hidden py-[10px]">
           {posts.posts.status !== LoadingStatus.LOADED ? (
             <PostsScreenLoader
               itemsCount={10}
@@ -168,9 +168,9 @@ const PostsList: React.FC<PostsListProps> = ({ posts }) => {
       {posts.map((post) => (
         <div
           key={post.id}
-          className="shadow-md rounded-[8px] group relative hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200"
+          className="shadow-md rounded-[8px] grow-0 overflow-hidden group relative hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200"
         >
-          <span>{post.title}</span>
+          <p className="truncate">{post.title}</p>
           <button
             onClick={() => gotoPost(post.id)}
             className="bg-green-300 p-[5px] hidden group-hover:block absolute top-[8px] right-[8px] py-[5px] rounded-[6px] hover:scale-[1.05] hover:bg-green-400 transition duration-200"

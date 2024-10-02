@@ -43,3 +43,11 @@ export type UpdateMeData = {
   fullName?: string;
   avatarUrl?: string | null;
 };
+
+export interface PostValidationError {
+  type: string;
+  value: string;
+  msg: string;
+  path: string;
+  location: string;
+}

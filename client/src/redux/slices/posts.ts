@@ -1,13 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "../../axios";
 import { PostDto } from "../../dto";
-import { LoadingStatus, PostType } from "../../types";
+import { LoadingStatus, PostType, PostValidationError } from "../../types";
 
 interface PostsState {
   posts: {
     items: PostType[];
     status: LoadingStatus;
-    createError: string | null;
   };
   tags: {
     items: String[];
@@ -23,17 +22,21 @@ export const fetchPosts = createAsyncThunk(
   }
 );
 
-export const createPost = createAsyncThunk(
-  "posts/createPost",
-  async (dto: PostDto): Promise<PostType> => {
-    try {
-      const { data } = await axios.post<PostType>("/posts", dto);
-      return data;
-    } catch (error) {
-      throw error;
+export const createPost = createAsyncThunk<
+  PostType,
+  PostDto,
+  { rejectValue: PostValidationError[] | string[] }
+>("posts/createPost", async (dto: PostDto, { rejectWithValue }) => {
+  try {
+    const { data } = await axios.post<PostType>("/posts", dto);
+    return data;
+  } catch (error: any) {
+    if (error.response && Array.isArray(error.response.data)) {
+      return rejectWithValue(error.response.data);
     }
+    return rejectWithValue(["Unknown error occurred"]);
   }
-);
+});
 
 export const fetchMyPosts = createAsyncThunk(
   "posts/fetchMyPosts",
@@ -55,7 +58,6 @@ const initialState: PostsState = {
   posts: {
     items: [],
     status: LoadingStatus.LOADING,
-    createError: null,
   },
   tags: {
     items: [],
@@ -95,16 +97,8 @@ const postsSlice = createSlice({
         state.posts.status = LoadingStatus.ERROR;
       })
 
-      .addCase(createPost.pending, (state, _) => {
-        if (state.posts.createError) state.posts.createError = null;
-      })
-
       .addCase(createPost.fulfilled, (state, action) => {
         state.posts.items.push(action.payload);
-        if (state.posts.createError) state.posts.createError = null;
-      })
-      .addCase(createPost.rejected, (state, action) => {
-        state.posts.createError;
       })
 
       .addCase(fetchTags.pending, (state) => {

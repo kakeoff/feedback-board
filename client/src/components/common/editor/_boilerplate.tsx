@@ -25,6 +25,7 @@ import {
   StrikeThroughSupSubToggles,
   UndoRedo,
 } from "@mdxeditor/editor";
+import { uploadFile } from "../../../helpers/uploadFile";
 
 export const getAllPlugins = (readonly: boolean = false) => {
   return [
@@ -57,7 +58,7 @@ export const getAllPlugins = (readonly: boolean = false) => {
     headingsPlugin({ allowedHeadingLevels: [1, 2, 3] }),
     linkPlugin(),
     linkDialogPlugin(),
-    imagePlugin(),
+    imagePlugin({ imageUploadHandler }),
     tablePlugin(),
     thematicBreakPlugin(),
     frontmatterPlugin(),
@@ -75,3 +76,8 @@ export const getAllPlugins = (readonly: boolean = false) => {
     markdownShortcutPlugin(),
   ];
 };
+
+async function imageUploadHandler(image: File) {
+  const url = await uploadFile(image);
+  return import.meta.env.VITE_SERVER_URL + url;
+}
