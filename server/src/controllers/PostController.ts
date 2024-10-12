@@ -7,12 +7,9 @@ import {
 
 export const getLastTags = async (req: Request, res: Response) => {
   try {
-    const posts = await PostModel.find().limit(10).exec();
-    const tags = posts
-      .map((post) => post.tags)
-      .flat()
-      .slice(0, 10);
-    const uniqueItems = [...new Set(tags)];
+    const posts = await PostModel.find().sort({ createdAt: -1 }).exec();
+    const tags = posts.map((post) => post.tags).flat();
+    const uniqueItems = [...new Set(tags)].slice(0, 10);
     res.json(uniqueItems);
   } catch (err) {
     console.log(err);
