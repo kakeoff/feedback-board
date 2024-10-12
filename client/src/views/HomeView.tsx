@@ -12,8 +12,12 @@ export function HomeView() {
   const { posts, tags } = useSelector((state: RootState) => state.posts);
   const isPostsLoading = posts.status === LoadingStatus.LOADING;
   React.useEffect(() => {
-    dispatch(fetchPosts());
-    dispatch(fetchTags());
+    if (!posts.items.length) {
+      dispatch(fetchPosts());
+    }
+    if (!tags.items.length) {
+      dispatch(fetchTags());
+    }
   }, []);
 
   return (

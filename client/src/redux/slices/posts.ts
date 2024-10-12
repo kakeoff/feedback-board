@@ -8,6 +8,10 @@ interface PostsState {
     items: PostType[];
     status: LoadingStatus;
   };
+  myPosts: {
+    items: PostType[];
+    status: LoadingStatus;
+  };
   tags: {
     items: String[];
     status: LoadingStatus;
@@ -59,6 +63,10 @@ const initialState: PostsState = {
     items: [],
     status: LoadingStatus.LOADING,
   },
+  myPosts: {
+    items: [],
+    status: LoadingStatus.LOADING,
+  },
   tags: {
     items: [],
     status: LoadingStatus.LOADING,
@@ -85,20 +93,21 @@ const postsSlice = createSlice({
       })
 
       .addCase(fetchMyPosts.pending, (state) => {
-        state.posts.items = [];
-        state.posts.status = LoadingStatus.LOADING;
+        state.myPosts.items = [];
+        state.myPosts.status = LoadingStatus.LOADING;
       })
       .addCase(fetchMyPosts.fulfilled, (state, action) => {
-        state.posts.items = action.payload;
-        state.posts.status = LoadingStatus.LOADED;
+        state.myPosts.items = action.payload;
+        state.myPosts.status = LoadingStatus.LOADED;
       })
       .addCase(fetchMyPosts.rejected, (state) => {
-        state.posts.items = [];
-        state.posts.status = LoadingStatus.ERROR;
+        state.myPosts.items = [];
+        state.myPosts.status = LoadingStatus.ERROR;
       })
 
       .addCase(createPost.fulfilled, (state, action) => {
         state.posts.items.push(action.payload);
+        state.myPosts.items.push(action.payload);
       })
 
       .addCase(fetchTags.pending, (state) => {

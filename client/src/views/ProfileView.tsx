@@ -26,7 +26,7 @@ interface PostsListProps {
 
 function ProfileView() {
   const dispatch = useDispatch<AppDispatch>();
-  const posts = useSelector((state: RootState) => state.posts);
+  const posts = useSelector((state: RootState) => state.posts.myPosts);
   const isUserLoading = useSelector(
     (state: RootState) => state.auth.status === LoadingStatus.LOADING
   );
@@ -36,7 +36,9 @@ function ProfileView() {
   const [showResetAvatar, setShowResetAvatar] = useState(false);
 
   React.useEffect(() => {
-    dispatch(fetchMyPosts());
+    if (!posts.items.length) {
+      dispatch(fetchMyPosts());
+    }
   }, []);
 
   const handleClickAvatar = (): void => {
@@ -61,8 +63,8 @@ function ProfileView() {
   };
 
   return (
-    <div className="flex w-full items-start h-full pb-[10px] overflow-hidden justify-between gap-[20px] px-[100px]">
-      <div className="bg-gray-100 border rounded-[8px] min-w-[400px] flex flex-col gap-[20px] items-center p-[20px] shadow-md h-full">
+    <div className="flex flex-col md:flex-row w-full items-start h-full pb-[10px] overflow-hidden justify-between gap-[20px] px-[40px] lg:px-[100px]">
+      <div className="bg-gray-100 border rounded-[8px] md:w-[400px] w-full flex flex-col gap-[20px] items-center p-[20px] shadow-md h-full">
         <div className="w-[300px] h-[300px] flex-none overflow-hidden relative group rounded-[100%] shadow-md border-[1px] border-gray-500">
           <div onClick={handleClickAvatar} className="absolute w-full h-full">
             <div className="opacity-0 group-hover:opacity-100 flex transition-opacity duration-300 ease-in-out justify-center items-center w-full h-full bg-black/50 cursor-pointer">
@@ -85,7 +87,7 @@ function ProfileView() {
         {isUserLoading ? (
           <UserDataLoader />
         ) : (
-          <div className="text-[20px] text-left flex justify-start w-full gap-[10px] flex-col">
+          <div className="text-[20px] flex justify-start w-[300px] gap-[10px] flex-col">
             <div className="flex items-center gap-[5px]">
               <Icon
                 className="flex-none"
@@ -118,10 +120,10 @@ function ProfileView() {
               </p>
             </div>
             <button
-              className="bg-blue-300 px-[10px] py-[5px] text-[20px] rounded-[6px] hover:scale-[1.05] w-full hover:bg-blue-400 transition duration-200"
+              className="bg-blue-300 px-[10px] py-[5px] text-[20px] rounded-[6px] hover:scale-[1.02] w-full hover:bg-blue-400 transition duration-200"
               onClick={() => setShowResetAvatar(true)}
             >
-              RESET AVATAR
+              Reset avatar
             </button>
           </div>
         )}
@@ -132,14 +134,14 @@ function ProfileView() {
           <p>My posts</p>
         </div>
         <div className="h-full w-full flex flex-col gap-[10px] overflow-y-auto overflow-x-hidden py-[10px]">
-          {posts.posts.status !== LoadingStatus.LOADED ? (
+          {posts.status !== LoadingStatus.LOADED ? (
             <PostsScreenLoader
               itemsCount={10}
               itemHeight={50}
               showSpinner={false}
             />
           ) : (
-            <PostsList posts={posts.posts.items} />
+            <PostsList posts={posts.items} />
           )}
         </div>
       </div>
