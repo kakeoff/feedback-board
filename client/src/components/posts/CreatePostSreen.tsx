@@ -15,6 +15,7 @@ import { PostValidationError } from "../../types";
 function CreatePostScreen() {
   const dispatch = useDispatch<AppDispatch>();
   const [title, setTitle] = useState<string>("");
+  const [tags, setTags] = useState<string[]>([]);
   const [md, setMd] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isCreating, setIsCreating] = useState<boolean>(false);
@@ -22,8 +23,17 @@ function CreatePostScreen() {
     PostValidationError[] | string[] | undefined
   >([]);
   const navigate = useNavigate();
-  const handleChangeTitle = (value: string): void => {
+  const handleChangeTitle = (value: string): string => {
     setTitle(value);
+    return value;
+  };
+
+  const handleChangeTags = (value: string): string => {
+    const replaced = value.replaceAll(" ", "");
+    value = replaced;
+    const tags = replaced.split(",");
+    setTags(tags);
+    return replaced;
   };
 
   const handleChangeMd = (value: string): void => {
@@ -43,7 +53,7 @@ function CreatePostScreen() {
     const data: PostDto = {
       title,
       text: md,
-      tags: ["vue"],
+      tags: tags,
       imageUrl,
     };
     const result = await dispatch(createPost(data));
@@ -69,6 +79,13 @@ function CreatePostScreen() {
         placeholder="Type a title of post..."
         onChange={handleChangeTitle}
       />
+      <div className="text-[20px]">
+        <InputElement
+          type="text"
+          placeholder="Example tags: vue, react, angular, typescript..."
+          onChange={handleChangeTags}
+        />
+      </div>
       <div className="border-[2px] rounded-b-[6px] rounded-t-[8px]">
         <Editor handleChange={handleChangeMd} markdown={md} />
       </div>
