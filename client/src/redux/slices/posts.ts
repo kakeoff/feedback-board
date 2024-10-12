@@ -26,6 +26,14 @@ export const fetchPosts = createAsyncThunk(
   }
 );
 
+export const deletePost = createAsyncThunk(
+  "posts/deletePost",
+  async (postId: string): Promise<string> => {
+    await axios.delete(`/posts/${postId}`);
+    return postId;
+  }
+);
+
 export const createPost = createAsyncThunk<
   PostType,
   PostDto,
@@ -108,6 +116,21 @@ const postsSlice = createSlice({
       .addCase(createPost.fulfilled, (state, action) => {
         state.posts.items.push(action.payload);
         state.myPosts.items.push(action.payload);
+      })
+
+      .addCase(deletePost.fulfilled, (state, action) => {
+        const postIdx = state.posts.items.findIndex(
+          (i) => i.id === action.payload
+        );
+        if (postIdx !== -1) {
+          state.posts.items.splice(postIdx, 1);
+        }
+        const myPostIdx = state.myPosts.items.findIndex(
+          (i) => i.id === action.payload
+        );
+        if (myPostIdx !== -1) {
+          state.myPosts.items.splice(myPostIdx, 1);
+        }
       })
 
       .addCase(fetchTags.pending, (state) => {

@@ -5,6 +5,7 @@ import {
   mdiArrowRight,
   mdiCalendarCheckOutline,
   mdiCamera,
+  mdiDelete,
   mdiEmailOutline,
   mdiPostOutline,
 } from "@mdi/js";
@@ -14,7 +15,7 @@ import { uploadFile } from "../helpers/uploadFile";
 import { updateMe } from "../redux/slices/auth";
 import { LoadingStatus, PostType, UpdateMeData } from "../types";
 import React from "react";
-import { fetchMyPosts } from "../redux/slices/posts";
+import { deletePost, fetchMyPosts } from "../redux/slices/posts";
 import { PostsScreenLoader } from "../components/posts/PostsScreenLoader";
 import { useNavigate } from "react-router-dom";
 import { ConfirmModal } from "../components/common/ConfirmModal";
@@ -22,6 +23,7 @@ import UserDataLoader from "../components/auth/UserDataLoader";
 
 interface PostsListProps {
   posts: PostType[];
+  setPostIdToDelete: (postId: string) => void;
 }
 
 function ProfileView() {
@@ -34,6 +36,7 @@ function ProfileView() {
   const avatarUrl = `${import.meta.env.VITE_SERVER_URL}${userData?.avatarUrl}`;
   const inputRef = useRef<HTMLInputElement>(null);
   const [showResetAvatar, setShowResetAvatar] = useState(false);
+  const [postIdToDelete, setPostIdToDelete] = useState("");
 
   React.useEffect(() => {
     if (!posts.items.length) {
@@ -45,6 +48,12 @@ function ProfileView() {
     if (inputRef.current) {
       inputRef.current.click();
     }
+  };
+
+  const onDeletePost = async (postId: string): Promise<void> => {
+    if (!postId.length) return;
+    await dispatch(deletePost(postId));
+    setPostIdToDelete("");
   };
 
   const onUpdateMe = async (data: UpdateMeData): Promise<void> => {
@@ -141,7 +150,10 @@ function ProfileView() {
               showSpinner={false}
             />
           ) : (
-            <PostsList posts={posts.items} />
+            <PostsList
+              posts={posts.items}
+              setPostIdToDelete={setPostIdToDelete}
+            />
           )}
         </div>
       </div>
@@ -155,11 +167,19 @@ function ProfileView() {
           }
         />
       )}
+      {postIdToDelete && (
+        <ConfirmModal
+          text="Are you sure you want to delete post?"
+          title="Delete post"
+          onClose={() => setPostIdToDelete("")}
+          onSubmit={() => onDeletePost(postIdToDelete)}
+        />
+      )}
     </div>
   );
 }
 
-const PostsList: React.FC<PostsListProps> = ({ posts }) => {
+const PostsList: React.FC<PostsListProps> = ({ posts, setPostIdToDelete }) => {
   const navigate = useNavigate();
 
   const gotoPost = (id: string) => {
@@ -173,12 +193,20 @@ const PostsList: React.FC<PostsListProps> = ({ posts }) => {
           className="shadow-md rounded-[8px] grow-0 overflow-hidden group relative hover:bg-gray-300 cursor-pointer transition duration-200 p-[15px] bg-gray-200"
         >
           <p className="truncate">{post.title}</p>
-          <button
-            onClick={() => gotoPost(post.id)}
-            className="bg-green-300 p-[5px] hidden group-hover:block absolute top-[8px] right-[8px] py-[5px] rounded-[6px] hover:scale-[1.05] hover:bg-green-400 transition duration-200"
-          >
-            <Icon path={mdiArrowRight} size={0.8} color="black" />
-          </button>
+          <div className="hidden group-hover:flex gap-[5px] absolute right-[8px] top-[8px]">
+            <button
+              onClick={() => gotoPost(post.id)}
+              className="bg-green-300 p-[5px] top-[8px] right-[8px] py-[5px] rounded-[6px] hover:scale-[1.05] hover:bg-green-400 transition duration-200"
+            >
+              <Icon path={mdiArrowRight} size={0.8} color="black" />
+            </button>
+            <button
+              onClick={() => setPostIdToDelete(post.id)}
+              className="bg-red-300 p-[5px] top-[8px] right-[8px] py-[5px] rounded-[6px] hover:scale-[1.05] hover:bg-red-400 transition duration-200"
+            >
+              <Icon path={mdiDelete} size={0.8} color="black" />
+            </button>
+          </div>
         </div>
       ))}
     </>
