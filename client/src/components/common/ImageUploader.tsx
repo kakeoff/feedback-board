@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Icon from "@mdi/react";
 import { mdiCamera, mdiDelete } from "@mdi/js";
 import FileInputElement from "../common/FileInputElement";
@@ -14,7 +14,10 @@ function ImageUploader({
   initialPreview = null,
   customClassName,
 }: ImageUploaderProps) {
-  const [preview, setPreview] = useState<string | null>(initialPreview);
+  useEffect(() => {
+    setPreview(initialPreview);
+  }, [initialPreview]);
+  const [preview, setPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {

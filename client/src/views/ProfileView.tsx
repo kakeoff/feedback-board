@@ -37,6 +37,7 @@ function ProfileView() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [showResetAvatar, setShowResetAvatar] = useState(false);
   const [postIdToDelete, setPostIdToDelete] = useState("");
+  const DEFAULT_AVATAR_URl = "uploads/default/default.png";
 
   React.useEffect(() => {
     if (!posts.items.length) {
@@ -128,12 +129,14 @@ function ProfileView() {
                   new Date(userData.createdAt).toLocaleDateString()}
               </p>
             </div>
-            <button
-              className="bg-blue-300 px-[10px] py-[5px] text-[20px] rounded-[6px] hover:scale-[1.02] w-full hover:bg-blue-400 transition duration-200"
-              onClick={() => setShowResetAvatar(true)}
-            >
-              Reset avatar
-            </button>
+            {!userData?.avatarUrl.includes(DEFAULT_AVATAR_URl) && (
+              <button
+                className="bg-blue-300 px-[10px] py-[5px] text-[20px] rounded-[6px] hover:scale-[1.02] w-full hover:bg-blue-400 transition duration-200"
+                onClick={() => setShowResetAvatar(true)}
+              >
+                Reset avatar
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -162,9 +165,7 @@ function ProfileView() {
           text="Are you sure you want to reset avatar?"
           title="Reset avatar"
           onClose={() => setShowResetAvatar(false)}
-          onSubmit={() =>
-            onUpdateMe({ avatarUrl: "uploads/default/default.png" })
-          }
+          onSubmit={() => onUpdateMe({ avatarUrl: DEFAULT_AVATAR_URl })}
         />
       )}
       {postIdToDelete && (

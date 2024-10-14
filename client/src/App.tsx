@@ -9,7 +9,7 @@ import { useEffect } from "react";
 import { fetchMe } from "./redux/slices/auth";
 import { isTokenExists } from "./helpers/checkToken";
 import ProfileView from "./views/ProfileView";
-import CreatePostScreen from "./components/posts/CreatePostSreen";
+import CreatePostScreen from "./components/posts/CreatePostScreen";
 function App() {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -25,6 +25,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomeView />} />
           <Route path="/posts/:id" element={<FullPost />} />
+          <Route path="/posts/:id/edit" element={<CreatePostScreen />} />
           <Route path="/posts/new" element={<CreatePostScreen />} />
           <Route path="/profile" element={<ProfileView />} />
           <Route path="*" element={<NotFound />} />

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { postMapper } from "../mappers/post.mapper";
 import PostModel from "../models/Post";
 import {
   CreateOrUpdatePostRequest,
@@ -23,24 +24,7 @@ export const getAll = async (req: Request, res: Response) => {
       .populate("user")
       .sort([["createdAt", -1]])
       .exec();
-    const mappedPosts = posts.map((post) => {
-      return {
-        id: post._id,
-        text: post.text,
-        title: post.title,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt,
-        viewsCount: post.viewsCount,
-        imageUrl: post.imageUrl,
-        tags: post.tags,
-        user: {
-          id: post.user._id,
-          fullName: post.user.fullName,
-          email: post.user.email,
-          avatarUrl: post.user.avatarUrl,
-        },
-      };
-    });
+    const mappedPosts = posts.map(postMapper);
     res.json(mappedPosts);
   } catch (err) {
     console.log(err);
@@ -55,24 +39,7 @@ export const getMyPosts = async (req: RequestWithUserId, res: Response) => {
     const posts = await PostModel.find({ user: userId })
       .populate("user")
       .exec();
-    const mappedPosts = posts.map((post) => {
-      return {
-        id: post._id,
-        text: post.text,
-        title: post.title,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt,
-        viewsCount: post.viewsCount,
-        imageUrl: post.imageUrl,
-        tags: post.tags,
-        user: {
-          id: post.user._id,
-          fullName: post.user.fullName,
-          email: post.user.email,
-          avatarUrl: post.user.avatarUrl,
-        },
-      };
-    });
+    const mappedPosts = posts.map(postMapper);
     res.json(mappedPosts);
   } catch (err) {
     console.log(err);
@@ -97,22 +64,7 @@ export const getOne = async (req: Request, res: Response) => {
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
-    res.json({
-      id: post._id,
-      text: post.text,
-      title: post.title,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      viewsCount: post.viewsCount,
-      imageUrl: post.imageUrl,
-      tags: post.tags,
-      user: {
-        id: post.user._id,
-        fullName: post.user.fullName,
-        email: post.user.email,
-        avatarUrl: post.user.avatarUrl,
-      },
-    });
+    res.json(postMapper(post));
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Failed to get or update post" });
@@ -133,33 +85,23 @@ export const create = async (req: CreateOrUpdatePostRequest, res: Response) => {
 
     const post = await doc.save();
 
-    res.json({
-      id: post._id,
-      text: post.text,
-      title: post.title,
-      createdAt: post.createdAt,
-      updatedAt: post.updatedAt,
-      viewsCount: post.viewsCount,
-      imageUrl: post.imageUrl,
-      tags: post.tags,
-      user: {
-        id: post.user._id,
-        fullName: post.user.fullName,
-        email: post.user.email,
-        avatarUrl: post.user.avatarUrl,
-      },
-    });
+    res.json(postMapper(post));
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Failed to create post" });
   }
 };
 
-export const remove = async (req: Request, res: Response) => {
+export const remove = async (req: RequestWithUserId, res: Response) => {
   try {
     const postId = req.params.id;
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(404).json({ message: "UserId not found" });
+    }
     const post = await PostModel.findOneAndDelete({
       _id: postId,
+      user: userId,
     });
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -175,10 +117,11 @@ export const update = async (req: CreateOrUpdatePostRequest, res: Response) => {
   try {
     const postId = req.params.id;
     const userId = req.userId;
-    if (!userId) return res.status(403).json({ message: "User not found" });
-    const post = await PostModel.updateOne(
+    if (!userId) return res.status(403).json({ message: "UserId not found" });
+    const post = await PostModel.findOneAndUpdate(
       {
         _id: postId,
+        user: userId,
       },
       {
         title: req.body.title,
@@ -186,9 +129,13 @@ export const update = async (req: CreateOrUpdatePostRequest, res: Response) => {
         tags: req.body.tags,
         imageUrl: req.body.imageUrl,
         user: userId,
-      }
-    );
-    res.json({ success: true });
+      },
+      { returnDocument: "after" }
+    ).populate("user");
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    res.json(postMapper(post));
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Failed to update post" });

@@ -5,12 +5,8 @@ import { PostType } from "../../types";
 import { FullPostCard } from "./FullPostCard";
 import { PostsScreenLoader } from "./PostsScreenLoader";
 
-type FullPostParams = {
-  id: string;
-};
-
 export function FullPost() {
-  const { id } = useParams<FullPostParams>();
+  const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<PostType | null>(null);
   const [isLoading, setLoading] = useState(true);
 

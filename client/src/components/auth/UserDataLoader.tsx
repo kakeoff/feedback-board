@@ -12,7 +12,6 @@ function UserDataLoader() {
           </div>
         ))}
       </div>
-      <div className="bg-blue-300 px-[10px] py-[5px] text-[20px] rounded-[6px] w-full h-[40px]" />
     </>
   );
 }

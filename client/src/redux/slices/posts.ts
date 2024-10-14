@@ -38,9 +38,25 @@ export const createPost = createAsyncThunk<
   PostType,
   PostDto,
   { rejectValue: PostValidationError[] | string[] }
->("posts/createPost", async (dto: PostDto, { rejectWithValue }) => {
+>("posts/createPost", async (dto, { rejectWithValue }) => {
   try {
     const { data } = await axios.post<PostType>("/posts", dto);
+    return data;
+  } catch (error: any) {
+    if (error.response && Array.isArray(error.response.data)) {
+      return rejectWithValue(error.response.data);
+    }
+    return rejectWithValue(["Unknown error occurred"]);
+  }
+});
+
+export const updatePost = createAsyncThunk<
+  PostType,
+  { id: string; dto: PostDto },
+  { rejectValue: PostValidationError[] | string[] }
+>("posts/updatePost", async ({ id, dto }, { rejectWithValue }) => {
+  try {
+    const { data } = await axios.patch<PostType>(`/posts/${id}`, dto);
     return data;
   } catch (error: any) {
     if (error.response && Array.isArray(error.response.data)) {
@@ -116,6 +132,21 @@ const postsSlice = createSlice({
       .addCase(createPost.fulfilled, (state, action) => {
         state.posts.items.push(action.payload);
         state.myPosts.items.push(action.payload);
+      })
+
+      .addCase(updatePost.fulfilled, (state, action) => {
+        const postIdx = state.posts.items.findIndex(
+          (i) => i.id === action.payload.id
+        );
+        if (postIdx !== -1) {
+          state.posts.items[postIdx] = action.payload;
+        }
+        const myPostIdx = state.myPosts.items.findIndex(
+          (i) => i.id === action.payload.id
+        );
+        if (myPostIdx !== -1) {
+          state.myPosts.items[postIdx] = action.payload;
+        }
       })
 
       .addCase(deletePost.fulfilled, (state, action) => {
