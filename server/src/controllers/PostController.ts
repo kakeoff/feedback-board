@@ -36,7 +36,6 @@ export const getAll = async (req: Request, res: Response) => {
       .limit(limitNumber)
       .skip((pageNumber - 1) * limitNumber)
       .exec();
-    console.log(posts);
     const mappedPosts = posts.map(postMapper);
 
     res.json({
