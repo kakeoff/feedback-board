@@ -9,6 +9,7 @@ interface PostsState {
     status: LoadingStatus;
     currentPage: number | null;
     totalPages: number;
+    selectedTag?: string;
   };
   myPosts: {
     items: PostType[];
@@ -20,16 +21,17 @@ interface PostsState {
   };
 }
 
-interface IPageWithLimit {
+interface IPageParams {
   page: number;
   limit?: number;
+  tag?: string;
 }
 
 export const fetchPosts = createAsyncThunk(
   "posts/fetchPosts",
-  async ({ page, limit }: IPageWithLimit): Promise<GetPostsResponse> => {
+  async ({ page, limit, tag }: IPageParams): Promise<GetPostsResponse> => {
     const { data } = await axios.get<GetPostsResponse>("/posts", {
-      params: { page, limit },
+      params: { page, limit, tag },
     });
     return data;
   }
@@ -97,6 +99,7 @@ const initialState: PostsState = {
     status: LoadingStatus.LOADING,
     currentPage: null,
     totalPages: 0,
+    selectedTag: undefined,
   },
   myPosts: {
     items: [],
@@ -117,18 +120,23 @@ const postsSlice = createSlice({
       .addCase(fetchPosts.pending, (state) => {
         state.posts.items = [];
         state.posts.status = LoadingStatus.LOADING;
+        state.posts.currentPage = null;
+        state.posts.totalPages = 0;
+        state.posts.selectedTag = undefined;
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.posts.items = action.payload.posts;
         state.posts.status = LoadingStatus.LOADED;
         state.posts.currentPage = action.payload.currentPage;
         state.posts.totalPages = action.payload.totalPages;
+        state.posts.selectedTag = action.payload.selectedTag;
       })
       .addCase(fetchPosts.rejected, (state) => {
         state.posts.items = [];
         state.posts.status = LoadingStatus.ERROR;
         state.posts.currentPage = null;
         state.posts.totalPages = 0;
+        state.posts.selectedTag = undefined;
       })
 
       .addCase(fetchMyPosts.pending, (state) => {

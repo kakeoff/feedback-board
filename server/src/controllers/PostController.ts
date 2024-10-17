@@ -20,21 +20,23 @@ export const getLastTags = async (req: Request, res: Response) => {
 
 export const getAll = async (req: Request, res: Response) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10, tag } = req.query;
 
     const pageNumber = Number(page);
     const limitNumber = Number(limit);
 
-    const totalPosts = await PostModel.countDocuments();
+    const tagsQuery = tag ? { tags: tag } : {};
+
+    const totalPosts = await PostModel.countDocuments(tagsQuery);
     const totalPages = Math.ceil(totalPosts / limitNumber);
 
-    const posts = await PostModel.find()
+    const posts = await PostModel.find(tagsQuery)
       .populate("user")
       .sort([["createdAt", -1]])
       .limit(limitNumber)
       .skip((pageNumber - 1) * limitNumber)
       .exec();
-
+    console.log(posts);
     const mappedPosts = posts.map(postMapper);
 
     res.json({
@@ -42,6 +44,7 @@ export const getAll = async (req: Request, res: Response) => {
       currentPage: pageNumber,
       totalPages: totalPages,
       totalPosts: totalPosts,
+      selectedTag: tag || undefined,
     });
   } catch (err) {
     console.log(err);

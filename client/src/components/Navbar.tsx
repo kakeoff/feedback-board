@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AuthModal } from "./auth/AuthModal";
 import { RegisterModal } from "./auth/RegisterModal";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,9 +29,23 @@ export function Navbar() {
   const [showLogout, setShowLogout] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const isAuth: boolean = useSelector(checkIsAuth);
-  const loadedPostPage: number | null = useSelector(
+  const cachedPostsPage: number | null = useSelector(
     (state: RootState) => state.posts.posts.currentPage
   );
+  const cachedPostsTag: string | undefined = useSelector(
+    (state: RootState) => state.posts.posts.selectedTag
+  );
+
+  const url = useMemo(() => {
+    let params = [];
+    if (cachedPostsPage) {
+      params.push(`page=${cachedPostsPage}`);
+    }
+    if (cachedPostsTag) {
+      params.push(`tag=${cachedPostsTag}`);
+    }
+    return params.length ? `/?${params.join("&")}` : "/";
+  }, [cachedPostsTag, cachedPostsPage]);
 
   const onLogin = async (data: AuthFormData) => {
     const result = await dispatch(fetchAuth(data));
@@ -81,7 +95,7 @@ export function Navbar() {
     <>
       <nav className="w-full flex fixed z-[10] bg-white justify-center pt-[10px]">
         <div className="w-full mx-[15px] lg:mx-[100px] p-[10px] rounded-[6px] flex justify-between items-center border-[1px] shadow-lg">
-          <Link to={loadedPostPage ? `/?page=${loadedPostPage}` : "/"}>
+          <Link to={url}>
             <span className="font-[700] transition duration-200 hover:text-blue-900">
               MERN-POSTS
             </span>

@@ -12,30 +12,48 @@ export function HomeView() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const currentPage = searchParams.get("page")
+
+  let currentPage: number = searchParams.get("page")
     ? Number(searchParams.get("page"))
     : 1;
+
+  const selectedTag: string | undefined = searchParams.get("tag") || undefined;
+
   const { posts, tags } = useSelector((state: RootState) => state.posts);
   const isPostsLoading = posts.status === LoadingStatus.LOADING;
-  const loadedPage = useSelector(
+  const cachedPage = useSelector(
     (state: RootState) => state.posts.posts.currentPage
   );
   const totalPages = useSelector(
     (state: RootState) => state.posts.posts.totalPages
   );
 
+  const cachedTag = useSelector(
+    (state: RootState) => state.posts.posts.selectedTag
+  );
+
   React.useEffect(() => {
-    if (loadedPage !== currentPage) {
-      dispatch(fetchPosts({ page: currentPage, limit: 5 }));
+    if (cachedPage !== currentPage || cachedTag !== selectedTag) {
+      dispatch(fetchPosts({ page: currentPage, limit: 5, tag: selectedTag }));
     }
-  }, [currentPage, dispatch]);
+  }, [currentPage, selectedTag, dispatch]);
 
   React.useEffect(() => {
     if (!tags.items.length) {
       dispatch(fetchTags());
     }
   }, []);
+  React.useEffect(() => {
+    if (currentPage > totalPages && totalPages !== 0) {
+      navigatePage(totalPages);
+    }
+  }, [totalPages]);
 
+  const navigatePage = (page: number) => {
+    const currentParams = new URLSearchParams(window.location.search);
+    currentParams.set("page", page.toString());
+    navigate(`?${currentParams.toString()}`);
+  };
   return (
     <div className="pb-[30px] px-[20px] lg:px-[200px]">
       <div className="flex md:flex-row flex-col-reverse justify-between gap-[20px]">
@@ -54,7 +72,7 @@ export function HomeView() {
                   ...Array.from({ length: totalPages }, (_, i) => (
                     <button
                       key={i}
-                      onClick={() => navigate(`?page=${i + 1}`)}
+                      onClick={() => navigatePage(i + 1)}
                       className={`w-[40px] h-[30px] rounded-[8px] hover:bg-blue-300 transition duration-200 bg-blue-100 flex items-center justify-center ${
                         currentPage === i + 1 ? "bg-blue-300" : ""
                       }`}

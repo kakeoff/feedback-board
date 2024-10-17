@@ -1,3 +1,4 @@
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { LoadingStatus } from "../../types";
 import { TagItem } from "../common/TagItem";
 
@@ -9,12 +10,29 @@ type TagsListProps = {
 };
 export const TagsList = (props: TagsListProps) => {
   const isLoading = props.tags.status === LoadingStatus.LOADING;
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const queryTag = searchParams.get("tag");
+
+  const handleClickTag = (tag: string) => {
+    const currentParams = new URLSearchParams(window.location.search);
+    currentParams.set("tag", tag);
+    navigate(`?${currentParams.toString()}`);
+  };
   return (
     <div className="w-full md:w-[250px] p-[20px] h-fit flex flex-wrap gap-[5px] rounded-[8px] shadow-lg border overflow-hidden">
       {isLoading ? (
         <TagsSkeleton />
       ) : (
-        props.tags.items.map((tag) => <TagItem key={tag} tag={tag} />)
+        props.tags.items.map((tag) => (
+          <div key={tag} onClick={() => handleClickTag(tag)}>
+            <TagItem
+              isSelected={queryTag?.toLowerCase() === tag.toLowerCase()}
+              isButton={true}
+              tag={tag}
+            />
+          </div>
+        ))
       )}
     </div>
   );
