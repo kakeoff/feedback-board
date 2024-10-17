@@ -9,6 +9,7 @@ import { deletePost } from "../../redux/slices/posts";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
+import { TagItem } from "../common/TagItem";
 
 interface FullPostCardProps {
   post: PostType;
@@ -68,39 +69,30 @@ export function FullPostCard(props: FullPostCardProps) {
               <Icon path={mdiCalendarCheckOutline} size={1.5} color="black" />
               <p className="font-[500]">Published {createdAt}</p>
             </div>
-            <div className="flex flex-wrap gap-[5px]">
-              {props.post.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="bg-blue-100 px-[5px] py-[2px] rounded-[4px]"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div className="my-[20px] h-[1px] bg-gray-300" />
-          <Editor markdown={props.post.text} readOnly={true} />
-          <div className="flex justify-between items-center mt-[20px]">
             <div className="flex flex-row gap-[10px] items-center">
               <img
                 className="w-[32px] h-[32px] object-cover border-[1px] rounded-[100%]"
                 src={`${url}${props.post.user.avatarUrl}`}
                 alt="avatar"
               />
-              <p className="font-[700] text-[16px]">
-                {props.post.user.fullName}
-              </p>
+              <p className="font-[500]">{props.post.user.fullName}</p>
             </div>
-            <div className="flex gap-[10px] justify-end">
-              <div className="flex gap-[3px] text-gray-500 text-[13px] items-center">
-                <Icon path={mdiUpdate} size={0.7} color="gray" />
-                <span className="mt-[2px]">{updatedAt}</span>
-              </div>
-              <div className="flex gap-[3px] text-gray-500 text-[13px] items-center">
-                <Icon path={mdiEyeOutline} size={0.7} color="gray" />
-                <span className="mt-[2px]">{props.post.viewsCount}</span>
-              </div>
+            <div className="flex flex-wrap gap-[5px]">
+              {props.post.tags.map((tag) => (
+                <TagItem key={tag} tag={tag} />
+              ))}
+            </div>
+          </div>
+          <div className="my-[20px] h-[1px] bg-gray-300" />
+          <Editor markdown={props.post.text} readOnly={true} />
+          <div className="flex gap-[10px] justify-end">
+            <div className="flex gap-[3px] text-gray-500 text-[13px] items-center">
+              <Icon path={mdiUpdate} size={0.7} color="gray" />
+              <span className="mt-[2px]">{updatedAt}</span>
+            </div>
+            <div className="flex gap-[3px] text-gray-500 text-[13px] items-center">
+              <Icon path={mdiEyeOutline} size={0.7} color="gray" />
+              <span className="mt-[2px]">{props.post.viewsCount}</span>
             </div>
           </div>
         </div>

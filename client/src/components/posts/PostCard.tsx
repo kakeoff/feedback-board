@@ -1,6 +1,7 @@
 import { PostType } from "../../types";
 import { mdiEyeOutline, mdiUpdate, mdiCalendarCheckOutline } from "@mdi/js";
 import Icon from "@mdi/react";
+import { TagItem } from "../common/TagItem";
 
 interface PostCardProps {
   post: PostType;
@@ -31,34 +32,29 @@ export function PostCard(props: PostCardProps) {
           <p className="font-[700] text-[13px]">Published {createdAt}</p>
         </div>
 
+        <div className="flex flex-row gap-[5px] items-center">
+          <img
+            className="w-[24px] h-[24px] object-cover border-[1px] rounded-[100%]"
+            src={`${url}${props.post.user.avatarUrl}`}
+            alt="avatar"
+          />
+          <p className="font-[700] text-[13px]">{props.post.user.fullName}</p>
+        </div>
+
         <div className="flex flex-wrap gap-[5px]">
           {props.post.tags.map((tag) => (
-            <span
-              key={tag}
-              className="bg-blue-100 px-[5px] py-[2px] rounded-[4px]"
-            >
-              #{tag}
-            </span>
+            <TagItem key={tag} tag={tag} />
           ))}
         </div>
-        <div className="flex justify-between items-center mt-[20px]">
-          <div className="flex flex-row gap-[5px] items-center">
-            <img
-              className="w-[24px] h-[24px] object-cover border-[1px] rounded-[100%]"
-              src={`${url}${props.post.user.avatarUrl}`}
-              alt="avatar"
-            />
-            <p className="font-[700] text-[13px]">{props.post.user.fullName}</p>
+
+        <div className="flex gap-[10px] justify-end">
+          <div className="flex gap-[3px] text-gray-500 text-[11px] items-center">
+            <Icon path={mdiUpdate} size={0.7} color="gray" />
+            <span className="mt-[2px]">{updatedAt}</span>
           </div>
-          <div className="flex gap-[10px] justify-end">
-            <div className="flex gap-[3px] text-gray-500 text-[11px] items-center">
-              <Icon path={mdiUpdate} size={0.7} color="gray" />
-              <span className="mt-[2px]">{updatedAt}</span>
-            </div>
-            <div className="flex gap-[3px] text-gray-500 text-[11px] items-center">
-              <Icon path={mdiEyeOutline} size={0.7} color="gray" />
-              <span className="mt-[2px]">{props.post.viewsCount}</span>
-            </div>
+          <div className="flex gap-[3px] text-gray-500 text-[11px] items-center">
+            <Icon path={mdiEyeOutline} size={0.7} color="gray" />
+            <span className="mt-[2px]">{props.post.viewsCount}</span>
           </div>
         </div>
       </div>

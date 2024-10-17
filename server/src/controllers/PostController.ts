@@ -20,12 +20,29 @@ export const getLastTags = async (req: Request, res: Response) => {
 
 export const getAll = async (req: Request, res: Response) => {
   try {
+    const { page = 1, limit = 10 } = req.query;
+
+    const pageNumber = Number(page);
+    const limitNumber = Number(limit);
+
+    const totalPosts = await PostModel.countDocuments();
+    const totalPages = Math.ceil(totalPosts / limitNumber);
+
     const posts = await PostModel.find()
       .populate("user")
       .sort([["createdAt", -1]])
+      .limit(limitNumber)
+      .skip((pageNumber - 1) * limitNumber)
       .exec();
+
     const mappedPosts = posts.map(postMapper);
-    res.json(mappedPosts);
+
+    res.json({
+      posts: mappedPosts,
+      currentPage: pageNumber,
+      totalPages: totalPages,
+      totalPosts: totalPosts,
+    });
   } catch (err) {
     console.log(err);
     return res.status(500).json({ message: "Failed to get posts" });

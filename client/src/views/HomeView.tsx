@@ -6,15 +6,31 @@ import { PostsScreen } from "../components/posts/PostsScreen";
 import { TagsList } from "../components/tags/TagsList";
 import { PostsScreenLoader } from "../components/posts/PostsScreenLoader";
 import { LoadingStatus } from "../types";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export function HomeView() {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const currentPage = searchParams.get("page")
+    ? Number(searchParams.get("page"))
+    : 1;
   const { posts, tags } = useSelector((state: RootState) => state.posts);
   const isPostsLoading = posts.status === LoadingStatus.LOADING;
+  const loadedPage = useSelector(
+    (state: RootState) => state.posts.posts.currentPage
+  );
+  const totalPages = useSelector(
+    (state: RootState) => state.posts.posts.totalPages
+  );
+
   React.useEffect(() => {
-    if (!posts.items.length) {
-      dispatch(fetchPosts());
+    if (loadedPage !== currentPage) {
+      dispatch(fetchPosts({ page: currentPage, limit: 5 }));
     }
+  }, [currentPage, dispatch]);
+
+  React.useEffect(() => {
     if (!tags.items.length) {
       dispatch(fetchTags());
     }
@@ -31,7 +47,24 @@ export function HomeView() {
               itemsCount={3}
             />
           ) : (
-            <PostsScreen posts={posts} />
+            <div className="flex flex-col gap-[15px]">
+              <PostsScreen posts={posts} />
+              <div className="flex gap-[5px] flex-wrap">
+                {[
+                  ...Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => navigate(`?page=${i + 1}`)}
+                      className={`w-[40px] h-[30px] rounded-[8px] hover:bg-blue-300 transition duration-200 bg-blue-100 flex items-center justify-center ${
+                        currentPage === i + 1 ? "bg-blue-300" : ""
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  )),
+                ]}
+              </div>
+            </div>
           )}
         </div>
         <TagsList tags={tags} />

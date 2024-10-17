@@ -1,27 +1,36 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "../../axios";
-import { PostDto } from "../../dto";
+import { GetPostsResponse, PostDto } from "../../dto";
 import { LoadingStatus, PostType, PostValidationError } from "../../types";
 
 interface PostsState {
   posts: {
     items: PostType[];
     status: LoadingStatus;
+    currentPage: number | null;
+    totalPages: number;
   };
   myPosts: {
     items: PostType[];
     status: LoadingStatus;
   };
   tags: {
-    items: String[];
+    items: string[];
     status: LoadingStatus;
   };
 }
 
+interface IPageWithLimit {
+  page: number;
+  limit?: number;
+}
+
 export const fetchPosts = createAsyncThunk(
   "posts/fetchPosts",
-  async (): Promise<PostType[]> => {
-    const { data } = await axios.get<PostType[]>("/posts");
+  async ({ page, limit }: IPageWithLimit): Promise<GetPostsResponse> => {
+    const { data } = await axios.get<GetPostsResponse>("/posts", {
+      params: { page, limit },
+    });
     return data;
   }
 );
@@ -76,8 +85,8 @@ export const fetchMyPosts = createAsyncThunk(
 
 export const fetchTags = createAsyncThunk(
   "posts/fetchTags",
-  async (): Promise<String[]> => {
-    const { data } = await axios.get<String[]>("/tags");
+  async (): Promise<string[]> => {
+    const { data } = await axios.get<string[]>("/tags");
     return data;
   }
 );
@@ -86,6 +95,8 @@ const initialState: PostsState = {
   posts: {
     items: [],
     status: LoadingStatus.LOADING,
+    currentPage: null,
+    totalPages: 0,
   },
   myPosts: {
     items: [],
@@ -108,12 +119,16 @@ const postsSlice = createSlice({
         state.posts.status = LoadingStatus.LOADING;
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
-        state.posts.items = action.payload;
+        state.posts.items = action.payload.posts;
         state.posts.status = LoadingStatus.LOADED;
+        state.posts.currentPage = action.payload.currentPage;
+        state.posts.totalPages = action.payload.totalPages;
       })
       .addCase(fetchPosts.rejected, (state) => {
         state.posts.items = [];
         state.posts.status = LoadingStatus.ERROR;
+        state.posts.currentPage = null;
+        state.posts.totalPages = 0;
       })
 
       .addCase(fetchMyPosts.pending, (state) => {

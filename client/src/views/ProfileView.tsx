@@ -40,7 +40,7 @@ function ProfileView() {
   const DEFAULT_AVATAR_URl = "uploads/default/default.png";
 
   React.useEffect(() => {
-    if (!posts.items.length) {
+    if (posts.status !== LoadingStatus.LOADED) {
       dispatch(fetchMyPosts());
     }
   }, []);

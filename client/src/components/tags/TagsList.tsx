@@ -1,9 +1,10 @@
 import { LoadingStatus } from "../../types";
+import { TagItem } from "../common/TagItem";
 
 type TagsListProps = {
   tags: {
-    items: String[];
-    status: String;
+    items: string[];
+    status: string;
   };
 };
 export const TagsList = (props: TagsListProps) => {
@@ -13,14 +14,7 @@ export const TagsList = (props: TagsListProps) => {
       {isLoading ? (
         <TagsSkeleton />
       ) : (
-        props.tags.items.map((tag, index) => (
-          <div
-            className="bg-blue-100 px-[5px] py-[2px] rounded-[4px]"
-            key={index}
-          >
-            # {tag}
-          </div>
-        ))
+        props.tags.items.map((tag) => <TagItem key={tag} tag={tag} />)
       )}
     </div>
   );
