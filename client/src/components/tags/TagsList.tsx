@@ -16,7 +16,9 @@ export const TagsList = (props: TagsListProps) => {
 
   const handleClickTag = (tag: string) => {
     const currentParams = new URLSearchParams(window.location.search);
-    currentParams.set("tag", tag);
+    queryTag === tag
+      ? currentParams.delete("tag")
+      : currentParams.set("tag", tag);
     navigate(`?${currentParams.toString()}`);
   };
   return (

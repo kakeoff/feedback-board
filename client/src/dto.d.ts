@@ -13,4 +13,5 @@ export type GetPostsResponse = {
   totalPages: number;
   totalPosts: number;
   selectedTag?: string;
+  search?: string;
 };

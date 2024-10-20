@@ -29,23 +29,29 @@ export function Navbar() {
   const [showLogout, setShowLogout] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const isAuth: boolean = useSelector(checkIsAuth);
-  const cachedPostsPage: number | null = useSelector(
-    (state: RootState) => state.posts.posts.currentPage
-  );
-  const cachedPostsTag: string | undefined = useSelector(
-    (state: RootState) => state.posts.posts.selectedTag
-  );
+  const cachedPostsData: {
+    tag?: string;
+    search?: string;
+    page: number | null;
+  } = useSelector((state: RootState) => ({
+    tag: state.posts.posts.selectedTag,
+    search: state.posts.posts.search,
+    page: state.posts.posts.currentPage,
+  }));
 
   const url = useMemo(() => {
     let params = [];
-    if (cachedPostsPage) {
-      params.push(`page=${cachedPostsPage}`);
+    if (cachedPostsData.page) {
+      params.push(`page=${cachedPostsData.page}`);
     }
-    if (cachedPostsTag) {
-      params.push(`tag=${cachedPostsTag}`);
+    if (cachedPostsData.tag) {
+      params.push(`tag=${cachedPostsData.tag}`);
+    }
+    if (cachedPostsData.search) {
+      params.push(`search=${cachedPostsData.search}`);
     }
     return params.length ? `/?${params.join("&")}` : "/";
-  }, [cachedPostsTag, cachedPostsPage]);
+  }, [cachedPostsData]);
 
   const onLogin = async (data: AuthFormData) => {
     const result = await dispatch(fetchAuth(data));
@@ -119,18 +125,12 @@ export function Navbar() {
           {isAuth && (
             <div className="flex flex-row gap-[5px] font-[700] text-[13px]">
               <Link to="/posts/new">
-                <button
-                  onClick={() => {}}
-                  className="bg-blue-300 px-[10px] py-[5px] rounded-[6px] hover:scale-[1.05] hover:bg-blue-400 transition duration-200"
-                >
+                <button className="bg-blue-300 px-[10px] py-[5px] rounded-[6px] hover:scale-[1.05] hover:bg-blue-400 transition duration-200">
                   CREATE POST
                 </button>
               </Link>
               <Link to="/profile">
-                <button
-                  onClick={() => {}}
-                  className="bg-green-300 px-[10px] py-[5px] rounded-[6px] hover:scale-[1.05] hover:bg-green-400 transition duration-200"
-                >
+                <button className="bg-green-300 px-[10px] py-[5px] rounded-[6px] hover:scale-[1.05] hover:bg-green-400 transition duration-200">
                   PROFILE
                 </button>
               </Link>

@@ -10,6 +10,7 @@ interface PostsState {
     currentPage: number | null;
     totalPages: number;
     selectedTag?: string;
+    search?: string;
   };
   myPosts: {
     items: PostType[];
@@ -25,13 +26,19 @@ interface IPageParams {
   page: number;
   limit?: number;
   tag?: string;
+  search?: string;
 }
 
 export const fetchPosts = createAsyncThunk(
   "posts/fetchPosts",
-  async ({ page, limit, tag }: IPageParams): Promise<GetPostsResponse> => {
+  async ({
+    page,
+    limit,
+    tag,
+    search,
+  }: IPageParams): Promise<GetPostsResponse> => {
     const { data } = await axios.get<GetPostsResponse>("/posts", {
-      params: { page, limit, tag },
+      params: { page, limit, tag, search },
     });
     return data;
   }
@@ -100,6 +107,7 @@ const initialState: PostsState = {
     currentPage: null,
     totalPages: 0,
     selectedTag: undefined,
+    search: undefined,
   },
   myPosts: {
     items: [],
@@ -123,6 +131,7 @@ const postsSlice = createSlice({
         state.posts.currentPage = null;
         state.posts.totalPages = 0;
         state.posts.selectedTag = undefined;
+        state.posts.search = undefined;
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.posts.items = action.payload.posts;
@@ -130,6 +139,7 @@ const postsSlice = createSlice({
         state.posts.currentPage = action.payload.currentPage;
         state.posts.totalPages = action.payload.totalPages;
         state.posts.selectedTag = action.payload.selectedTag;
+        state.posts.search = action.payload.search;
       })
       .addCase(fetchPosts.rejected, (state) => {
         state.posts.items = [];
@@ -137,6 +147,7 @@ const postsSlice = createSlice({
         state.posts.currentPage = null;
         state.posts.totalPages = 0;
         state.posts.selectedTag = undefined;
+        state.posts.search = undefined;
       })
 
       .addCase(fetchMyPosts.pending, (state) => {

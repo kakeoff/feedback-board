@@ -7,36 +7,52 @@ import { TagsList } from "../components/tags/TagsList";
 import { PostsScreenLoader } from "../components/posts/PostsScreenLoader";
 import { LoadingStatus } from "../types";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { SearchInput } from "../components/common/SearchInput";
 
 export function HomeView() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  let currentPage: number = searchParams.get("page")
+  let currentPageQuery: number = searchParams.get("page")
     ? Number(searchParams.get("page"))
     : 1;
 
-  const selectedTag: string | undefined = searchParams.get("tag") || undefined;
+  const tagQuery: string | undefined = searchParams.get("tag") || undefined;
+  const searchQuery: string | undefined =
+    searchParams.get("search") || undefined;
 
   const { posts, tags } = useSelector((state: RootState) => state.posts);
   const isPostsLoading = posts.status === LoadingStatus.LOADING;
-  const cachedPage = useSelector(
-    (state: RootState) => state.posts.posts.currentPage
-  );
+  const cachedPostsData: {
+    tag?: string;
+    search?: string;
+    page: number | null;
+  } = useSelector((state: RootState) => ({
+    tag: state.posts.posts.selectedTag,
+    search: state.posts.posts.search,
+    page: state.posts.posts.currentPage,
+  }));
   const totalPages = useSelector(
     (state: RootState) => state.posts.posts.totalPages
   );
 
-  const cachedTag = useSelector(
-    (state: RootState) => state.posts.posts.selectedTag
-  );
-
   React.useEffect(() => {
-    if (cachedPage !== currentPage || cachedTag !== selectedTag) {
-      dispatch(fetchPosts({ page: currentPage, limit: 5, tag: selectedTag }));
+    if (
+      cachedPostsData.page !== currentPageQuery ||
+      cachedPostsData.tag !== tagQuery?.toString().toLowerCase().trim() ||
+      cachedPostsData.search !== searchQuery?.toString().toLowerCase().trim()
+    ) {
+      dispatch(
+        fetchPosts({
+          page: currentPageQuery,
+          limit: 5,
+          tag: tagQuery,
+          search: searchQuery,
+        })
+      );
     }
-  }, [currentPage, selectedTag, dispatch]);
+  }, [currentPageQuery, tagQuery, searchQuery, dispatch]);
 
   React.useEffect(() => {
     if (!tags.items.length) {
@@ -44,7 +60,7 @@ export function HomeView() {
     }
   }, []);
   React.useEffect(() => {
-    if (currentPage > totalPages && totalPages !== 0) {
+    if (currentPageQuery > totalPages && totalPages !== 0) {
       navigatePage(totalPages);
     }
   }, [totalPages]);
@@ -58,6 +74,9 @@ export function HomeView() {
     <div className="pb-[30px] px-[20px] lg:px-[200px]">
       <div className="flex md:flex-row flex-col-reverse justify-between gap-[20px]">
         <div className="w-full overflow-hidden h-full px-[10px]">
+          <div className="w-full mb-[20px]">
+            <SearchInput />
+          </div>
           {isPostsLoading ? (
             <PostsScreenLoader
               showSpinner={false}
@@ -74,7 +93,7 @@ export function HomeView() {
                       key={i}
                       onClick={() => navigatePage(i + 1)}
                       className={`w-[40px] h-[30px] rounded-[8px] hover:bg-blue-300 transition duration-200 bg-blue-100 flex items-center justify-center ${
-                        currentPage === i + 1 ? "bg-blue-300" : ""
+                        currentPageQuery === i + 1 ? "bg-blue-300" : ""
                       }`}
                     >
                       {i + 1}
@@ -85,7 +104,9 @@ export function HomeView() {
             </div>
           )}
         </div>
-        <TagsList tags={tags} />
+        <div className="flex flex-col gap-[10px]">
+          <TagsList tags={tags} />
+        </div>
       </div>
     </div>
   );

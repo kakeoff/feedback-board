@@ -20,22 +20,37 @@ export const getLastTags = async (req: Request, res: Response) => {
 
 export const getAll = async (req: Request, res: Response) => {
   try {
-    const { page = 1, limit = 10, tag } = req.query;
+    const { page = 1, limit = 10, tag, search } = req.query;
 
     const pageNumber = Number(page);
     const limitNumber = Number(limit);
 
-    const tagsQuery = tag ? { tags: tag } : {};
+    const filterQuery: {
+      tags?: string;
+      title?: { $regex: string; $options: string };
+    } = {};
 
-    const totalPosts = await PostModel.countDocuments(tagsQuery);
+    if (tag) {
+      filterQuery.tags = tag.toString().toLowerCase().trim();
+    }
+
+    if (search) {
+      filterQuery.title = {
+        $regex: search.toString().toLowerCase().trim(),
+        $options: "i",
+      };
+    }
+
+    const totalPosts = await PostModel.countDocuments(filterQuery);
     const totalPages = Math.ceil(totalPosts / limitNumber);
 
-    const posts = await PostModel.find(tagsQuery)
+    const posts = await PostModel.find(filterQuery)
       .populate("user")
       .sort([["createdAt", -1]])
       .limit(limitNumber)
       .skip((pageNumber - 1) * limitNumber)
       .exec();
+
     const mappedPosts = posts.map(postMapper);
 
     res.json({
@@ -43,7 +58,8 @@ export const getAll = async (req: Request, res: Response) => {
       currentPage: pageNumber,
       totalPages: totalPages,
       totalPosts: totalPosts,
-      selectedTag: tag || undefined,
+      selectedTag: tag ? tag.toString().toLowerCase().trim() : undefined,
+      search: search ? search.toString().toLowerCase().trim() : undefined,
     });
   } catch (err) {
     console.log(err);

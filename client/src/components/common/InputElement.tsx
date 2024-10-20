@@ -1,7 +1,7 @@
 type InputElementPropsType = {
   placeholder: string;
   type: string;
-  onChange: (value: string) => string;
+  onChange: (value: string) => string | void;
   onBlur?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   customClassName?: string;
   value: string;
@@ -10,7 +10,7 @@ type InputElementPropsType = {
 function InputElement(props: InputElementPropsType) {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const changedValue = props.onChange(event.target.value);
-    event.target.value = changedValue;
+    if (changedValue) event.target.value = changedValue;
   };
   const handleBlur = (event: React.ChangeEvent<HTMLInputElement>) => {
     props.onBlur && props.onBlur(event);
