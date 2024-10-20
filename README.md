@@ -4,9 +4,9 @@
 
 ## Preview
 
-![image](src/assets/images/main.png)
-![image](src/assets/images/post.png)
-![image](src/assets/images/profile.png)
+![image](client/src/assets/images/main.png)
+![image](client/src/assets/images/post.png)
+![image](client/src/assets/images/profile.png)
 
 ## Features
 
