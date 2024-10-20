@@ -21,7 +21,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <div className="pt-[90px]">
+      <div className="pt-[90px] max-w-[1700px] mx-auto">
         <Routes>
           <Route path="/" element={<HomeView />} />
           <Route path="/posts/:id" element={<FullPost />} />
